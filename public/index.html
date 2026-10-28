@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="Discover thoughtful journeys across Tamil Nadu with Yaathirai." />
+  <title>yaathirai.</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="packages-data.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body class="is-loading">
+
+  <div class="loader" id="loader" aria-label="Loading Yaathirai">
+    <div class="loader-wordmark" aria-hidden="true">
+      <span class="loader-letter" style="--i:0">y</span>
+      <span class="loader-letter" style="--i:1">a</span>
+      <span class="loader-letter" style="--i:2">a</span>
+      <span class="loader-letter" style="--i:3">t</span>
+      <span class="loader-letter" style="--i:4">h</span>
+      <span class="loader-letter" style="--i:5">i</span>
+      <span class="loader-letter" style="--i:6">r</span>
+      <span class="loader-letter" style="--i:7">a</span>
+      <span class="loader-letter" style="--i:8">i</span>
+      <span class="loader-letter loader-dot" style="--i:9">.</span>
+    </div>
+  </div>
+
+  <main class="landing" id="landing">
+
+    <!-- HERO -->
+    <section class="hero" aria-label="Yaathirai travel homepage">
+      <div class="hero-slides" aria-hidden="true">
+        <div class="hero-slide is-active" data-slide="0"></div>
+        <div class="hero-slide" data-slide="1"></div>
+        <div class="hero-slide" data-slide="2"></div>
+        <div class="hero-slide" data-slide="3"></div>
+        <div class="hero-slide" data-slide="4"></div>
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+
+      <header class="site-header">
+        <a class="brand" href="index.html" aria-label="Yaathirai home">yaathirai.</a>
+
+        <a class="account-link" href="login.html" aria-label="Go to your account">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="7.5" r="3.5"></circle>
+            <path d="M4.8 20c.5-4 3.2-6.2 7.2-6.2s6.7 2.2 7.2 6.2"></path>
+          </svg>
+        </a>
+      </header>
+
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="hero-line" style="--l:0"><span>TAKE THE SCENIC ROUTE</span></span></p>
+        <h1><span class="hero-line" style="--l:1"><span>YOUR NEXT STORY</span></span><span class="hero-line" style="--l:2"><span>STARTS HERE<span class="headline-period">.</span></span></span></h1>
+        <p class="hero-description"><span class="hero-line" style="--l:3"><span>Find the places that stay with you.</span></span></p>
+      </div>
+
+      <div class="hero-footer" aria-hidden="true">
+        <span class="scroll-cue">A DIFFERENT WAY TO GET AWAY <span class="cue-line"></span></span>
+      </div>
+
+    </section>
+
+    <!-- DESTINATIONS -->
+    <section class="destinations-section" id="explore">
+      <div class="destination-doodles" aria-hidden="true">
+        <span class="doodle doodle-star">✳</span>
+        <span class="doodle doodle-sparkle">✧</span>
+        <span class="doodle doodle-loop">〰</span>
+        <span class="doodle doodle-flower">✿</span>
+        <span class="doodle doodle-arrow">↗</span>
+        <span class="doodle doodle-twinkle">✦</span>
+        <span class="doodle doodle-orbit">· &nbsp; · &nbsp; ·</span>
+      </div>
+
+      <header class="destinations-heading">
+        <p class="destinations-eyebrow">A LITTLE WONDER, AROUND EVERY CORNER <span>✳</span></p>
+        <h2>DESTINATIONS<br />TRAVELLERS LOVE<span>.</span></h2>
+      </header>
+
+      <div class="destination-explorer">
+        <div class="wheel-area">
+          <span class="wheel-note wheel-note-top" aria-hidden="true">PICK A PLACE ✳</span>
+
+          <div class="destination-wheel" id="destinationWheel"
+               aria-label="Choose a destination from the rotating photo wheel">
+
+            <div class="wheel-orbit-ring wheel-ring-one" aria-hidden="true"></div>
+            <div class="wheel-orbit-ring wheel-ring-two" aria-hidden="true"></div>
+
+            <div class="wheel-centre" aria-hidden="true">
+              <span>YOUR NEXT</span>
+              <strong>ESCAPE</strong>
+              <span class="wheel-centre-star">✳</span>
+            </div>
+
+            <div class="wheel-items" id="wheelItems">
+              <button class="wheel-photo" type="button" data-destination="Ooty" aria-label="Explore Ooty">
+                <img src="images/ooty.jpg" alt="Ooty landscape" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Kodaikanal" aria-label="Explore Kodaikanal">
+                <img src="images/kodaikanal.jpg" alt="Kodaikanal landscape" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Kanyakumari" aria-label="Explore Kanyakumari">
+                <img src="images/kanyakumari.jpg" alt="Kanyakumari coastline" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Madurai" aria-label="Explore Madurai">
+                <img src="images/madurai.jpg" alt="Madurai heritage" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Rameswaram" aria-label="Explore Rameswaram">
+                <img src="images/rameswaram.jpg" alt="Rameswaram coast" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Mahabalipuram" aria-label="Explore Mahabalipuram">
+                <img src="images/mahabalipuram.jpg" alt="Mahabalipuram heritage" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Tiruchendur" aria-label="Explore Tiruchendur">
+                <img src="images/tiruchendur.jpg" alt="Tiruchendur coastline" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Velankanni" aria-label="Explore Velankanni">
+                <img src="images/velankanni.jpg" alt="Velankanni" />
+              </button>
+
+              <button class="wheel-photo" type="button" data-destination="Chennai" aria-label="Explore Chennai">
+                <img src="images/chennai-bus.jpg" alt="Chennai" />
+              </button>
+            </div>
+          </div>
+
+          <span class="wheel-note wheel-note-bottom" aria-hidden="true">
+            THERE'S A PLACE FOR YOU <span>♡</span>
+          </span>
+          <span class="doodle wheel-sparkle-one" aria-hidden="true">✧</span>
+          <span class="doodle wheel-sparkle-two" aria-hidden="true">✳</span>
+        </div>
+
+        <aside class="destination-preview" id="destinationPreview" aria-live="polite" aria-atomic="true">
+
+          <div class="preview-prompt" id="previewPrompt">
+            <span class="prompt-mark" aria-hidden="true">✳</span>
+            <p>The world is wide, the possibilities endless, and your next story is waiting to be written.</p>
+          </div>
+
+          <article class="destination-polaroid is-hidden" id="destinationPolaroid">
+            <span class="polaroid-tape" aria-hidden="true"></span>
+            <span class="polaroid-stamp">A PLACE TO REMEMBER ✦</span>
+
+            <div class="polaroid-heading">
+              <span class="polaroid-number" id="destinationNumber"></span>
+              <span class="polaroid-heart" aria-hidden="true">♡</span>
+            </div>
+
+            <h3 id="destinationName"></h3>
+
+            <div class="polaroid-image">
+              <img id="destinationImage" src="" alt="" />
+              <span class="image-caption" id="destinationImageCaption"></span>
+            </div>
+
+            <p id="destinationDescription"></p>
+
+            <a class="destination-packages-link" id="destinationPackagesLink" href="packages.html">
+              <span>Discover this place</span>
+              <span class="packages-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <span class="polaroid-doodle" aria-hidden="true">made for wandering ♡</span>
+          </article>
+        </aside>
+      </div>
+    </section>
+
+    <!-- POPULAR PACKAGES -->
+    <section class="popular-packages-section" id="popular-packages" aria-labelledby="ppHeading">
+      <header class="pp-heading">
+        <p class="pp-eyebrow">THE YAATHIRAI TRAVEL EDIT <span aria-hidden="true">✳</span></p>
+        <h2 id="ppHeading">CURATED ITINERARIES<span>.</span></h2>
+        <p class="pp-intro">Hand-picked escapes across Tamil Nadu, ready to be pinned to your own map.</p>
+      </header>
+
+      <div class="pp-book" id="ppBook">
+        <div class="pp-stage" id="ppStage" tabindex="0" role="region" aria-label="Popular packages. Scroll sideways or use the left and right arrow keys."></div>
+        <span class="pp-edge pp-edge-prev" aria-hidden="true">‹</span>
+        <span class="pp-edge pp-edge-next" aria-hidden="true">›</span>
+      </div>
+    </section>
+
+    <!-- PLAN YOUR NEXT-CATION -->
+    <section class="nextcation-section" id="plan" aria-labelledby="ncHeading">
+      <svg class="nc-art" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+        <defs>
+          <symbol id="ncPin" viewBox="0 0 40 56">
+            <path d="M20 54 C 9 39, 4 30, 4 20 A16 16 0 0 1 36 20 C36 30 31 39 20 54 Z"></path>
+            <circle cx="20" cy="20" r="6"></circle>
+          </symbol>
+          <symbol id="ncPlane" viewBox="0 0 120 60">
+            <path d="M10 30 Q10 24 20 24 L92 24 Q114 24 114 30 Q114 36 92 36 L20 36 Q10 36 10 30 Z"></path>
+            <path d="M52 24 L38 4 L50 4 L74 24"></path>
+            <path d="M52 36 L38 56 L50 56 L74 36"></path>
+            <path d="M14 25 L6 12 L16 12 L26 24"></path>
+            <circle cx="82" cy="30" r="1.8"></circle>
+            <circle cx="92" cy="30" r="1.8"></circle>
+            <circle cx="102" cy="30" r="1.8"></circle>
+          </symbol>
+          <symbol id="ncTrain" viewBox="0 0 120 70">
+            <path d="M8 22 H92 V52 H8 Z"></path>
+            <path d="M92 30 L110 38 L110 52 H92"></path>
+            <path d="M5 22 H96"></path>
+            <path d="M18 12 H34 V22"></path>
+            <rect x="16" y="29" width="14" height="12" rx="2"></rect>
+            <rect x="40" y="29" width="14" height="12" rx="2"></rect>
+            <rect x="64" y="29" width="14" height="12" rx="2"></rect>
+            <circle cx="26" cy="58" r="6"></circle>
+            <circle cx="54" cy="58" r="6"></circle>
+            <circle cx="82" cy="58" r="6"></circle>
+          </symbol>
+        </defs>
+
+        <g class="nc-art-burg">
+          <use href="#ncPin" x="120" y="64" width="48" height="67"></use>
+          <use href="#ncPin" x="1020" y="352" width="48" height="67"></use>
+          <path d="M146 136 C 400 300, 560 60, 760 220 S 960 440, 1044 424" stroke-dasharray="2 9"></path>
+          <use href="#ncPlane" x="500" y="108" width="88" height="44" transform="rotate(-14 544 130)"></use>
+          <path d="M630 70 l0 14 M623 77 l14 0 M626 72 l8 10 M634 72 l-8 10"></path>
+          <path d="M930 80 q14 -16 30 -4 q16 -14 30 4 q-20 8 -60 0"></path>
+          <path d="M300 470 l0 12 M294 476 l12 0"></path>
+        </g>
+
+        <g class="nc-art-brown">
+          <use href="#ncTrain" x="84" y="396" width="150" height="88"></use>
+          <path d="M60 488 H340" stroke-dasharray="3 7"></path>
+          <path d="M66 496 H334 M80 488 v8 M120 488 v8 M160 488 v8 M200 488 v8 M240 488 v8 M280 488 v8 M320 488 v8"></path>
+          <path d="M1090 150 l0 12 M1084 156 l12 0"></path>
+          <path d="M820 500 q10 -10 20 0 M850 500 q10 -10 20 0"></path>
+        </g>
+      </svg>
+
+      <div class="nc-inner">
+        <h2 id="ncHeading">WHERE TO<br /><span>NEXT ?.</span></h2>
+
+        <form class="nc-form" id="ncForm" novalidate>
+          <div class="nc-field">
+            <label for="ncWhere">WHERE</label>
+            <input id="ncWhere" name="destination" type="text" placeholder="Anywhere in Tamil Nadu" autocomplete="off" />
+          </div>
+
+          <div class="nc-row">
+            <div class="nc-field">
+              <label for="ncStart">START DATE</label>
+              <input id="ncStart" name="start" type="date" required />
+            </div>
+            <div class="nc-field">
+              <label for="ncEnd">END DATE</label>
+              <input id="ncEnd" name="end" type="date" required />
+            </div>
+          </div>
+
+          <div class="nc-field nc-guests">
+            <span id="ncGuestsLabel">GUESTS</span>
+            <div class="nc-counter" role="group" aria-labelledby="ncGuestsLabel">
+              <button type="button" id="ncMinus" aria-label="Decrease number of guests">−</button>
+              <output id="ncCount" aria-live="polite">2</output>
+              <button type="button" id="ncPlus" aria-label="Increase number of guests">+</button>
+            </div>
+          </div>
+
+          <button class="nc-submit" type="submit"><span>FIND MY JOURNEY</span><span aria-hidden="true">→</span></button>
+          <p class="nc-msg" id="ncMsg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="yaathirai-footer">
+    <div class="yaathirai-footer-inner">
+      <div class="yaathirai-footer-left">
+        <p class="yaathirai-footer-tagline">Travel like you belong.</p>
+        <div class="yaathirai-footer-base">
+          <p class="yaathirai-footer-brand">yaathirai.</p>
+          <p class="yaathirai-footer-copy">© 2026 Yaathirai. All rights reserved.</p>
+        </div>
+      </div>
+
+      <div class="yaathirai-footer-right">
+        <nav class="yaathirai-footer-nav" aria-label="Footer">
+          <a href="#explore">Destinations</a>
+          <a href="packages.html">Packages</a>
+          <a href="login.html">My Bookings</a>
+        </nav>
+        <a class="yaathirai-footer-cta" href="#plan"><span>START PLANNING</span><span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING NAV ISLAND: bottom centre over hero, bottom left over destinations -->
+  <nav class="journey-nav" aria-label="Main navigation">
+    <a class="nav-item" href="#explore"><span class="nav-label">Destinations</span></a>
+    <a class="nav-item" href="packages.html"><span class="nav-label">Packages</span></a>
+    <a class="nav-item" href="login.html"><span class="nav-label">My Bookings</span></a>
+  </nav>
+</body>
+</html>
