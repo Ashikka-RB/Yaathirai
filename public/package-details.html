@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Package Details - Yaathirai</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .details-container { max-width: 800px; margin: 40px auto; padding: 20px; background: #fffdf7; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    h2 { color: #7c2638; margin-top: 0; }
+    .section-title { font-weight: bold; margin-top: 25px; border-bottom: 2px solid #7c2638; padding-bottom: 5px; color: #302321; }
+    .itinerary-item { margin: 12px 0; padding: 12px; background: #f4efe5; border-radius: 6px; }
+    .booking-box { margin-top: 30px; padding: 20px; border: 1.5px solid #7c2638; border-radius: 8px; background: #ffffff; }
+    .booking-box select, .booking-box input { width: 100%; padding: 10px; margin: 8px 0 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    .btn-book { width: 100%; padding: 12px; background: #7c2638; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    .btn-book:hover { background: #56202d; }
+  </style>
+</head>
+<body>
+  <div class="details-container" id="detailsContent">
+    <p>Loading package details...</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const packageId = params.get('id');
+
+    // Fallback data for testing offline / without MySQL running
+    const mockDetails = {
+      package: {
+        package_id: packageId || 1,
+        title: "Misty Tea Trails",
+        destination_name: "Ooty",
+        provider_name: "Nilgiri Travels",
+        duration_days: 3,
+        price: 2500,
+        description: "Misty mountains, endless tea gardens, and crisp morning air."
+      },
+      itinerary: [
+        { day_no: 1, title: "Arrival & Botanical Gardens", description: "Check in and explore local gardens." },
+        { day_no: 2, title: "Doddabetta Peak & Tea Factory", description: "Panoramic valley views and tea tasting." },
+        { day_no: 3, title: "Ooty Lake & Departure", description: "Morning boating before heading home." }
+      ],
+      availability: [
+        { availability_id: 101, available_date: "2026-11-15", seats_available: 8 },
+        { availability_id: 102, available_date: "2026-11-20", seats_available: 4 }
+      ]
+    };
+
+    async function loadDetails() {
+      const container = document.getElementById('detailsContent');
+
+      if (!packageId) {
+        renderDetails(mockDetails);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/packages/detail?id=${packageId}`);
+        if (!res.ok) throw new Error("API Connection Failed");
+        const data = await res.json();
+        renderDetails(data);
+      } catch (err) {
+        // Fallback to sample data when database is offline
+        renderDetails(mockDetails);
+      }
+    }
+
+    function renderDetails(data) {
+      const container = document.getElementById('detailsContent');
+      const { package: pkg, itinerary, availability } = data;
+
+      container.innerHTML = `
+        <h2>${pkg.title}</h2>
+        <p><strong>Destination:</strong> ${pkg.destination_name || 'Tamil Nadu'}</p>
+        <p><strong>Provider:</strong> ${pkg.provider_name || 'Local Guide'}</p>
+        <p><strong>Duration:</strong> ${pkg.duration_days} Days | <strong>Price:</strong> ₹${pkg.price} per person</p>
+        <p>${pkg.description || ''}</p>
+
+        <div class="section-title">Itinerary</div>
+        ${itinerary && itinerary.length ? itinerary.map(item => `
+          <div class="itinerary-item">
+            <strong>Day ${item.day_no}: ${item.title}</strong>
+            <p>${item.description}</p>
+          </div>
+        `).join('') : '<p>No detailed itinerary provided.</p>'}
+
+        <div class="booking-box">
+          <h3>Book This Package</h3>
+          <label for="availDate">Select Available Date:</label>
+          <select id="availDate">
+            ${availability && availability.length ? availability.map(a => `
+              <option value="${a.availability_id}">
+                ${new Date(a.available_date).toISOString().split('T')[0]} (${a.seats_available} seats left)
+              </option>
+            `).join('') : '<option value="">No dates available</option>'}
+          </select>
+
+          <label for="travelers">Number of Travelers:</label>
+          <input type="number" id="travelers" min="1" value="1">
+
+          <button class="btn-book" onclick="proceedToBooking(${pkg.package_id}, ${pkg.price})">Proceed to Book</button>
+        </div>
+      `;
+    }
+
+    function proceedToBooking(packageId, price) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      
+      // Redirect to root login.html if not logged in
+      if (!user) {
+        alert('Please login first to book a package.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const availId = document.getElementById('availDate').value;
+      const travelers = document.getElementById('travelers').value;
+
+      if (!availId) {
+        alert('Please select a valid date.');
+        return;
+      }
+
+      sessionStorage.setItem('bookingData', JSON.stringify({
+        packageId,
+        availabilityId: availId,
+        travelers: parseInt(travelers),
+        totalAmount: travelers * price
+      }));
+
+      // Redirect to booking.html inside public/customer/
+      window.location.href = 'customer/booking.html';
+    }
+
+    loadDetails();
+  </script>
+</body>
+</html>

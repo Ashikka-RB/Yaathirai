@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Yaathirai</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .checkout-box { max-width: 500px; margin: 50px auto; padding: 25px; background: #fffdf7; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .checkout-box h2 { color: #7c2638; }
+    .btn-pay { width: 100%; padding: 12px; background: #7c2638; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <div class="checkout-box">
+    <h2>Confirm & Pay</h2>
+    <div id="summary"></div>
+    <button class="btn-pay" onclick="confirmPayment()">Pay & Complete Booking</button>
+  </div>
+
+  <script>
+    const bookingData = JSON.parse(sessionStorage.getItem('bookingData'));
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!bookingData || !user) {
+      alert('Session expired or missing data.');
+      window.location.href = 'packages.html';
+    } else {
+      document.getElementById('summary').innerHTML = `
+        <p><strong>Travelers:</strong> ${bookingData.travelers}</p>
+        <p><strong>Total Amount:</strong> ₹${bookingData.totalAmount}</p>
+      `;
+    }
+
+    async function confirmPayment() {
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerId: user.id,
+            packageId: bookingData.packageId,
+            availabilityId: bookingData.availabilityId,
+            travelers: bookingData.travelers,
+            totalAmount: bookingData.totalAmount
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert('Booking Successful!');
+        sessionStorage.removeItem('bookingData');
+        window.location.href = 'my-bookings.html';
+      } catch (err) {
+        alert('Booking Failed: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>

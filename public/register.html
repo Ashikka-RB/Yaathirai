@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Yaathirai</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-container { max-width: 400px; margin: 60px auto; padding: 30px; border-radius: 12px; background: #fffdf7; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .auth-container h2 { margin-bottom: 20px; font-family: "Archivo", sans-serif; color: #7c2638; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 0.8rem; font-weight: bold; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    .auth-btn { width: 100%; padding: 12px; background: #7c2638; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .error-msg { color: red; font-size: 0.8rem; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Create an Account</h2>
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+      </div>
+      <div class="form-group">
+        <label for="mobile">Mobile Number</label>
+        <input type="tel" id="mobile">
+      </div>
+      <div class="form-group">
+        <label for="role">Account Type</label>
+        <select id="role">
+          <option value="CUSTOMER">Customer / Traveler</option>
+          <option value="PROVIDER">Local Tourist / Package Provider</option>
+        </select>
+      </div>
+      <button type="submit" class="auth-btn">Register</button>
+      <p id="errorMsg" class="error-msg"></p>
+    </form>
+    <p style="margin-top:15px; font-size:0.8rem;">Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const mobile = document.getElementById('mobile').value;
+      const role = document.getElementById('role').value;
+      const errorMsg = document.getElementById('errorMsg');
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password, mobile, role })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        alert('Registration successful! Please login.');
+        window.location.href = 'login.html';
+
+      } catch (err) {
+        errorMsg.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>
