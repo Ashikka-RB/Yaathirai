@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tour Packages - Yaathirai</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .packages-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+    .search-bar { display: flex; gap: 10px; margin-bottom: 30px; }
+    .search-bar input { flex: 1; padding: 12px; border: 1.5px solid #ccc; border-radius: 8px; font-size: 1rem; }
+    .search-bar button { padding: 12px 24px; background: #7c2638; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .card { border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; background: #fffdf7; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .card h3 { color: #7c2638; margin-bottom: 10px; }
+    .card .price { font-size: 1.2rem; font-weight: bold; margin: 10px 0; color: #302321; }
+    .btn-detail { display: inline-block; padding: 10px 16px; background: #302321; color: white; border-radius: 6px; text-decoration: none; margin-top: 10px; font-weight: bold; }
+    .btn-detail:hover { background: #7c2638; }
+  </style>
+</head>
+<body>
+  <div class="packages-container">
+    <h2>Explore Tour Packages</h2>
+    
+    <form class="search-bar" onsubmit="event.preventDefault(); loadPackages();">
+      <input type="text" id="searchInput" placeholder="Search by destination (e.g. Ooty, Madurai)...">
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="grid" id="packageList"></div>
+  </div>
+
+  <script>
+    // Sample fallback data if testing without an active database connection
+    const mockPackages = [
+      { package_id: 1, title: "Misty Tea Trails", destination_name: "Ooty", duration_days: 3, price: "2500" },
+      { package_id: 2, title: "Pine and Lake Retreat", destination_name: "Kodaikanal", duration_days: 3, price: "3000" },
+      { package_id: 3, title: "Temple Town Trails", destination_name: "Madurai", duration_days: 2, price: "1800" },
+      { package_id: 4, title: "Sunrise at Land's End", destination_name: "Kanyakumari", duration_days: 2, price: "2200" }
+    ];
+
+    // Read URL query parameter if user arrived via e.g. packages.html?destination=Ooty
+    const urlParams = new URLSearchParams(window.location.search);
+    const destParam = urlParams.get('destination');
+    if (destParam) {
+      document.getElementById('searchInput').value = destParam;
+    }
+
+    async function loadPackages() {
+      const search = document.getElementById('searchInput').value.trim();
+      const listContainer = document.getElementById('packageList');
+      listContainer.innerHTML = '<p>Loading packages...</p>';
+
+      try {
+        const url = search ? `/api/packages?destination=${encodeURIComponent(search)}` : '/api/packages';
+        const res = await fetch(url);
+        
+        if (!res.ok) throw new Error("API Connection Failed");
+        const packages = await res.json();
+
+        if (!Array.isArray(packages) || packages.length === 0) {
+          listContainer.innerHTML = '<p>No packages found matching your search.</p>';
+          return;
+        }
+
+        renderPackages(packages);
+      } catch (err) {
+        // Fallback to sample data filtered by input string when DB is offline
+        const filtered = search 
+          ? mockPackages.filter(p => p.destination_name.toLowerCase().includes(search.toLowerCase()))
+          : mockPackages;
+
+        if (filtered.length === 0) {
+          listContainer.innerHTML = '<p>No packages found.</p>';
+        } else {
+          renderPackages(filtered);
+        }
+      }
+    }
+
+    function renderPackages(list) {
+      const listContainer = document.getElementById('packageList');
+      listContainer.innerHTML = list.map(pkg => `
+        <div class="card">
+          <h3>${pkg.title}</h3>
+          <p><strong>Destination:</strong> ${pkg.destination_name || 'Tamil Nadu'}</p>
+          <p><strong>Duration:</strong> ${pkg.duration_days} Days</p>
+          <p class="price">₹${pkg.price} / person</p>
+          <a class="btn-detail" href="package-details.html?id=${pkg.package_id}">View Details & Book</a>
+        </div>
+      `).join('');
+    }
+
+    // Trigger initial search on page load
+    loadPackages();
+  </script>
+</body>
+</html>
