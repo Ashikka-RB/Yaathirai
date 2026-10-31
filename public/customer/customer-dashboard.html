@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard - Yaathirai</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .dashboard-container { max-width: 900px; margin: 40px auto; padding: 20px; }
+    .welcome-card { background: #7c2638; color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; }
+    .quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .card { background: #fffdf7; border: 1px solid #ddd; padding: 20px; border-radius: 10px; text-align: center; }
+    .card a { display: inline-block; margin-top: 10px; padding: 10px 15px; background: #7c2638; color: white; border-radius: 6px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="welcome-card">
+      <h1 id="welcomeHeading">Welcome, Traveler!</h1>
+      <p>Explore curated tours, manage your bookings, and update your personal profile.</p>
+    </div>
+
+    <div class="quick-links">
+      <div class="card">
+        <h3>Search Tours</h3>
+        <p>Find packages across Tamil Nadu.</p>
+        <a href="search-packages.html">Explore Packages</a>
+      </div>
+      <div class="card">
+        <h3>My Bookings</h3>
+        <p>View your upcoming trips & history.</p>
+        <a href="my-bookings.html">View History</a>
+      </div>
+      <div class="card">
+        <h3>My Profile</h3>
+        <p>Update contact info & address.</p>
+        <a href="profile.html">Manage Profile</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'CUSTOMER') {
+      window.location.href = '../login.html';
+    } else {
+      document.getElementById('welcomeHeading').textContent = `Welcome, ${user.name}!`;
+    }
+  </script>
+</body>
+</html>

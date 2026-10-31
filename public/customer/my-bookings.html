@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings - Yaathirai</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    .booking-card { border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: #fffdf7; }
+    .status-CONFIRMED { color: green; font-weight: bold; }
+    .status-CANCELLED { color: red; font-weight: bold; }
+    .btn-cancel { background: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+    .review-box { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc; }
+    .review-box textarea { width: 100%; height: 60px; margin: 8px 0; padding: 8px; }
+    .btn-review { background: #7c2638; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>My Booking History</h2>
+    <div id="bookingsList"><p>Loading bookings...</p></div>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    async function fetchBookings() {
+      if (!user) {
+        window.location.href = '../login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/my-bookings?customerId=${user.id}`);
+        const bookings = await res.json();
+
+        if (!res.ok) throw new Error(bookings.error);
+
+        const list = document.getElementById('bookingsList');
+        if (bookings.length === 0) {
+          list.innerHTML = '<p>No bookings found.</p>';
+          return;
+        }
+
+        list.innerHTML = bookings.map(b => `
+          <div class="booking-card">
+            <h3>${b.package_title}</h3>
+            <p><strong>Travel Date:</strong> ${new Date(b.available_date).toISOString().split('T')[0]}</p>
+            <p><strong>Travelers:</strong> ${b.travelers} | <strong>Total Amount:</strong> ₹${b.total_amount}</p>
+            <p><strong>Status:</strong> <span class="status-${b.booking_status}">${b.booking_status}</span></p>
+
+            ${b.booking_status === 'CONFIRMED' ? `
+              <button class="btn-cancel" onclick="cancelBooking(${b.booking_id})">Cancel Booking</button>
+
+              <div class="review-box">
+                <h4>Leave a Review</h4>
+                <label>Rating (1-5):</label>
+                <select id="rating-${b.booking_id}">
+                  <option value="5">5 - Excellent</option>
+                  <option value="4">4 - Very Good</option>
+                  <option value="3">3 - Average</option>
+                  <option value="2">2 - Poor</option>
+                  <option value="1">1 - Terrible</option>
+                </select>
+                <textarea id="comment-${b.booking_id}" placeholder="Write your review..."></textarea>
+                <button class="btn-review" onclick="submitReview(${b.booking_id}, ${b.package_id})">Submit Review</button>
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+
+      } catch (err) {
+        document.getElementById('bookingsList').innerHTML = `<p style="color:red;">${err.message}</p>`;
+      }
+    }
+
+    async function cancelBooking(bookingId) {
+      if (!confirm('Are you sure you want to cancel this booking?')) return;
+
+      try {
+        const res = await fetch('/api/bookings/cancel', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookingId, customerId: user.id })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert('Booking cancelled successfully.');
+        fetchBookings();
+      } catch (err) {
+        alert('Cancellation failed: ' + err.message);
+      }
+    }
+
+    async function submitReview(bookingId, packageId) {
+      const rating = document.getElementById(`rating-${bookingId}`).value;
+      const comment = document.getElementById(`comment-${bookingId}`).value;
+
+      try {
+        const res = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bookingId,
+            customerId: user.id,
+            packageId,
+            rating: parseInt(rating),
+            comment
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert('Thank you for your review!');
+        fetchBookings();
+      } catch (err) {
+        alert('Failed to submit review: ' + err.message);
+      }
+    }
+
+    fetchBookings();
+  </script>
+</body>
+</html>

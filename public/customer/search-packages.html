@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Packages - Yaathirai</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+    .filter-box { display: flex; gap: 15px; background: #fffdf7; padding: 20px; border-radius: 10px; border: 1px solid #ccc; margin-bottom: 30px; flex-wrap: wrap; }
+    .filter-box input, .filter-box select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; flex: 1; min-width: 150px; }
+    .btn-search { padding: 10px 20px; background: #7c2638; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .card { border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; background: #fffdf7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Search & Filter Packages</h2>
+    
+    <div class="filter-box">
+      <input type="text" id="destInput" placeholder="Destination (e.g. Ooty)">
+      <button class="btn-search" onclick="applySearch()">Search</button>
+    </div>
+
+    <div class="grid" id="packageList"></div>
+  </div>
+
+  <script>
+    async function applySearch() {
+      const dest = document.getElementById('destInput').value.trim();
+      const container = document.getElementById('packageList');
+      container.innerHTML = '<p>Searching...</p>';
+
+      try {
+        const url = dest ? `/api/packages?destination=${encodeURIComponent(dest)}` : '/api/packages';
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        if (data.length === 0) {
+          container.innerHTML = '<p>No matching packages found.</p>';
+          return;
+        }
+
+        container.innerHTML = data.map(pkg => `
+          <div class="card">
+            <h3>${pkg.title}</h3>
+            <p><strong>Destination:</strong> ${pkg.destination_name || 'N/A'}</p>
+            <p><strong>Duration:</strong> ${pkg.duration_days} Days</p>
+            <p><strong>Price:</strong> ₹${pkg.price}</p>
+            <a href="package-details.html?id=${pkg.package_id}" style="color:#7c2638; font-weight:bold;">View Details & Book</a>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `<p style="color:red;">${err.message}</p>`;
+      }
+    }
+
+    applySearch();
+  </script>
+</body>
+</html>
