@@ -321,9 +321,17 @@
 .sa-switch input:checked + .sa-switch-track::after { transform: translateX(20px); }
 .sa-switch input:focus-visible + .sa-switch-track { outline: 2px solid var(--burgundy); outline-offset: 2px; }
 
+
+
 @media (max-width: 960px) {
   .sa-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
   .sa-form-grid, .sa-perm-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── search icon size (admin.css positions .search-icon but does not size it) ── */
+.search-input-wrap .search-icon {
+  width: 18px;
+  height: 18px;
 }
