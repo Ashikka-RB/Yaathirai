@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Bookings — yaathirai.</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="css/admin.css" />
+  <script src="js/admin-common.js" defer></script>
+  <script src="js/manage-bookings.js" defer></script>
+  <style>
+    /* Modal styles */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(43, 23, 23, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      place-items: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-backdrop.is-open {
+      display: grid;
+    }
+    .modal-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px 24px;
+      animation: modal-pop 250ms var(--ease-out);
+    }
+    @keyframes modal-pop {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px 8px;
+    }
+    .modal-close:hover {
+      color: var(--burgundy);
+    }
+    .status-select-control {
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--paper);
+      font-family: "Space Mono", monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--ink);
+      outline: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ADMIN SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <a class="sidebar-brand" href="admin-dashboard.html">
+        <span class="brand-title">yaathirai.</span>
+        <span class="brand-tag">Admin</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-group-title">Operations</p>
+      <a class="nav-link" href="admin-dashboard.html">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-link" href="manage-customers.html">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span>Customers</span>
+      </a>
+      <a class="nav-link" href="manage-providers.html">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        <span>Providers</span>
+      </a>
+      <a class="nav-link" href="manage-destinations.html">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <span>Destinations</span>
+      </a>
+      <a class="nav-link" href="manage-categories.html">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span>Categories</span>
+      </a>
+      <a class="nav-link" href="manage-packages.html">
+        <svg viewBox="0 0 24 24"><path d="m2 7 10-5 10 5-10 5z"></path><path d="M12 22V12"></path><path d="m22 7-10 5"></path><path d="m2 17 10 5 10-5"></path></svg>
+        <span>Packages</span>
+      </a>
+      <a class="nav-link active" href="manage-bookings.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="m9 15 2 2 4-4"></path></svg>
+        <span>Bookings</span>
+      </a>
+      <a class="nav-link" href="reports.html">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="4"></line></svg>
+        <span>Reports</span>
+      </a>
+
+      <!-- SUPER ADMIN CONDITIONAL SECTION -->
+      <div id="superAdminNavSection" style="display: none;">
+        <p class="nav-group-title">Super Admin</p>
+        <a class="nav-link" href="superadmin-dashboard.html">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span>Super Admin Console</span>
+        </a>
+        <a class="nav-link" href="manage-admins.html">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+          <span>Manage Admins</span>
+        </a>
+        <a class="nav-link" href="permissions.html">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Permissions</span>
+        </a>
+        <a class="nav-link" href="system-logs.html">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <span>System Logs</span>
+        </a>
+        <a class="nav-link" href="system-settings.html">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>System Settings</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile-pill">
+        <div class="user-avatar" id="userAvatarDisplay">A</div>
+        <div class="user-info">
+          <p class="user-name" id="userNameDisplay">Loading...</p>
+          <span class="user-role-badge" id="userRoleDisplay">Admin</span>
+        </div>
+        <button class="btn-icon-logout" data-action="logout" title="Sign out">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEW -->
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle navigation">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <div class="page-breadcrumb">
+          <span>Admin</span>
+          <span>/</span>
+          <strong>Manage Bookings</strong>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <a class="btn-public-site" href="index.html" target="_blank">
+          <span>Live Site</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <div class="page-header">
+        <div>
+          <p class="page-eyebrow">RESERVATIONS & ORDERS <span>✳</span></p>
+          <h1 class="page-title">MANAGE <span>BOOKINGS.</span></h1>
+          <p class="page-subtitle">Track customer orders, confirm reservations, monitor payment states, and resolve booking issues.</p>
+        </div>
+      </div>
+
+      <!-- FILTER CONTROLS -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="bookingSearchInput" placeholder="Search by customer, email, package title, or ref..." autocomplete="off" />
+        </div>
+        <select class="select-filter" id="bookingStatusFilter">
+          <option value="all">All Booking States</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select class="select-filter" id="paymentStatusFilter">
+          <option value="all">All Payment States</option>
+          <option value="paid">Paid</option>
+          <option value="unpaid">Unpaid</option>
+          <option value="refunded">Refunded</option>
+        </select>
+        <button class="btn-secondary" id="refreshBookingsBtn">Refresh</button>
+      </div>
+
+      <!-- BOOKINGS TABLE -->
+      <section class="admin-card">
+        <div class="admin-card-header">
+          <h2 class="admin-card-title">CUSTOMER <span>RESERVATIONS.</span></h2>
+          <span class="badge" id="bookingsCountBadge">0 Bookings</span>
+        </div>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Booking Ref</th>
+                <th>Customer</th>
+                <th>Package & Destination</th>
+                <th>Guests</th>
+                <th>Amount</th>
+                <th>Booking Status</th>
+                <th>Payment Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTbody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--muted); padding: 36px;">Loading reservations...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- BOOKING DOSSIER & RESOLUTION MODAL -->
+  <div class="modal-backdrop" id="bookingModalBackdrop">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalBookingRef">
+      <div class="modal-header">
+        <div>
+          <span class="mono-tag" style="font-size:0.68rem; color:var(--burgundy);">RESERVATION DETAILS</span>
+          <h2 class="modal-title" id="modalBookingRef">Booking #BK-0000</h2>
+        </div>
+        <button class="modal-close" id="bookingModalCloseBtn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-block">
+          <p class="info-label">Customer Name</p>
+          <p class="info-value" id="modalBookingCustomerName">—</p>
+        </div>
+        <div class="info-block">
+          <p class="info-label">Customer Contact</p>
+          <p class="info-value mono-tag" id="modalBookingCustomerContact">—</p>
+        </div>
+        <div class="info-block">
+          <p class="info-label">Tour Package</p>
+          <p class="info-value" id="modalBookingPackage">—</p>
+        </div>
+        <div class="info-block">
+          <p class="info-label">Destination</p>
+          <p class="info-value mono-tag" id="modalBookingDestination">—</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-block">
+          <p class="info-label">Total Amount</p>
+          <p class="info-value mono-tag" id="modalBookingAmount" style="color:var(--burgundy); font-size:1.15rem; font-weight:800;">—</p>
+        </div>
+        <div class="info-block">
+          <p class="info-label">Travelers</p>
+          <p class="info-value mono-tag" id="modalBookingTravelers">—</p>
+        </div>
+        <div class="info-block">
+          <p class="info-label">Booking Status</p>
+          <div id="modalBookingStatusBadge">—</div>
+        </div>
+        <div class="info-block">
+          <p class="info-label">Payment Status</p>
+          <div id="modalPaymentStatusBadge">—</div>
+        </div>
+      </div>
+
+      <!-- RESOLUTION CONTROLS -->
+      <div class="info-block" style="margin-bottom: 24px;">
+        <p class="info-label" style="margin-bottom: 8px;">Update Booking Status & Resolution</p>
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+          <select id="modalBookingStatusSelect" class="status-select-control">
+            <option value="pending">PENDING</option>
+            <option value="confirmed">CONFIRMED</option>
+            <option value="completed">COMPLETED</option>
+            <option value="cancelled">CANCELLED</option>
+          </select>
+          <select id="modalPaymentStatusSelect" class="status-select-control">
+            <option value="unpaid">UNPAID</option>
+            <option value="paid">PAID</option>
+            <option value="refunded">REFUNDED</option>
+          </select>
+          <button class="btn-primary btn-sm" id="saveBookingStatusBtn">Save Status</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; border-top: 1px solid var(--border-subtle); padding-top: 18px;">
+        <button class="btn-secondary btn-sm" id="bookingModalCloseActionBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,66 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Yaathirai</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — yaathirai.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    .auth-container { max-width: 400px; margin: 80px auto; padding: 30px; border-radius: 12px; background: #fffdf7; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    .auth-container h2 { margin-bottom: 20px; font-family: "Archivo", sans-serif; color: #7c2638; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; font-size: 0.8rem; font-weight: bold; }
-    .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
-    .auth-btn { width: 100%; padding: 12px; background: #7c2638; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-    .error-msg { color: red; font-size: 0.8rem; margin-top: 10px; }
+    body {
+      background: #f4efe5;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: #fffdf7;
+      border: 1px solid rgba(48, 35, 33, 0.15);
+      border-radius: 24px;
+      padding: 38px 32px 32px;
+      box-shadow: 0 16px 40px rgba(63, 42, 32, 0.1);
+      position: relative;
+    }
+
+    .auth-brand {
+      display: inline-block;
+      font-family: "Archivo", sans-serif;
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--burgundy);
+      text-decoration: none;
+      margin-bottom: 6px;
+    }
+
+    .auth-eyebrow {
+      font-family: "Space Mono", monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #89786d;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .auth-title {
+      font-family: "Archivo", sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      line-height: 1.1;
+    }
+
+    .auth-title span {
+      color: var(--burgundy);
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 7px;
+    }
+
+    .form-group label {
+      font-family: "Space Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--burgundy);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .form-group input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      border: 1.5px solid rgba(48, 35, 33, 0.22);
+      border-radius: 14px;
+      background: #fff;
+      font-family: "Space Mono", monospace;
+      font-size: 0.85rem;
+      color: #302321;
+      outline: none;
+      transition: border-color 200ms ease;
+    }
+
+    .form-group input:focus {
+      border-color: var(--burgundy);
+      outline: 2px solid var(--burgundy);
+      outline-offset: 2px;
+    }
+
+    .auth-submit {
+      margin-top: 8px;
+      width: 100%;
+      padding: 15px 24px;
+      border: none;
+      border-radius: 14px;
+      background: var(--burgundy);
+      color: #fff;
+      font-family: "Archivo", sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 200ms ease;
+    }
+
+    .auth-submit:hover {
+      background: #56202d;
+    }
+
+    .auth-msg {
+      min-height: 1.3em;
+      font-family: "Space Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--burgundy);
+      margin-top: 4px;
+    }
+
+    .demo-credentials {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed rgba(48, 35, 33, 0.18);
+    }
+
+    .demo-title {
+      font-family: "Space Mono", monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #6f5f56;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .demo-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .demo-btn {
+      padding: 5px 10px;
+      border: 1px solid rgba(48, 35, 33, 0.18);
+      border-radius: 999px;
+      background: #f8f6f2;
+      font-family: "Space Mono", monospace;
+      font-size: 0.65rem;
+      color: #302321;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .demo-btn:hover {
+      background: #7c2638;
+      color: #fff;
+      border-color: #7c2638;
+    }
+
+    .back-home {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      font-family: "Space Mono", monospace;
+      font-size: 0.72rem;
+      color: #6f5f56;
+      text-decoration: none;
+    }
+
+    .back-home:hover {
+      color: var(--burgundy);
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <div class="auth-container">
-    <h2>Login to Yaathirai</h2>
-    <form id="loginForm">
+
+  <div class="auth-card">
+    <a class="auth-brand" href="index.html">yaathirai.</a>
+    <p class="auth-eyebrow">PORTAL ACCESS <span>✳</span></p>
+    <h1 class="auth-title">SIGN IN TO<br /><span>YOUR ACCOUNT.</span></h1>
+
+    <form class="auth-form" id="loginForm">
       <div class="form-group">
         <label for="email">Email Address</label>
-        <input type="email" id="email" required>
+        <input type="email" id="email" required autocomplete="email" placeholder="name@yaathirai.com" />
       </div>
+
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" required>
+        <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" />
       </div>
-      <button type="submit" class="auth-btn">Login</button>
-      <p id="errorMsg" class="error-msg"></p>
+
+      <button type="submit" class="auth-submit">
+        <span>Sign In</span>
+        <span aria-hidden="true">→</span>
+      </button>
+
+      <p class="auth-msg" id="authMsg" role="status" aria-live="polite"></p>
     </form>
-    <p style="margin-top:15px; font-size:0.8rem;">Don't have an account? <a href="register.html">Register here</a></p>
+
+    <div class="demo-credentials">
+      <p class="demo-title">Quick Demo Login:</p>
+      <div class="demo-btns">
+        <button type="button" class="demo-btn" onclick="fillCreds('admin@yaathirai.com', 'admin123')">Admin</button>
+        <button type="button" class="demo-btn" onclick="fillCreds('superadmin@yaathirai.com', 'admin123')">Super Admin</button>
+        <button type="button" class="demo-btn" onclick="fillCreds('selvam@tntours.com', 'admin123')">Provider</button>
+        <button type="button" class="demo-btn" onclick="fillCreds('kavitha@example.com', 'admin123')">Customer</button>
+      </div>
+    </div>
+
+    <a class="back-home" href="index.html">← Return to Yaathirai Homepage</a>
   </div>
 
-  <!-- YOUR SCRIPT BLOCK IS KEPT HERE -->
   <script>
+    function fillCreds(email, pass) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = pass;
+      document.getElementById('authMsg').textContent = '';
+    }
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('email').value;
+      const msg = document.getElementById('authMsg');
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const errorMsg = document.getElementById('errorMsg');
+
+      msg.textContent = 'Verifying credentials...';
+      msg.style.color = 'var(--burgundy)';
 
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
         });
+
         const data = await res.json();
+        if (!res.ok || !data.success) {
+          msg.textContent = data.error || 'Login failed. Please check credentials.';
+          msg.style.color = '#9e2a2b';
+          return;
+        }
 
-        if (!res.ok) throw new Error(data.error);
+        msg.textContent = 'Success! Redirecting...';
+        msg.style.color = '#2e6930';
 
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Check if redirect query param exists
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectParam = urlParams.get('redirect');
 
-        // Updated paths for role dashboards
-        if (data.user.role === 'CUSTOMER') window.location.href = '/customer/customer-dashboard.html';
-        else if (data.user.role === 'PROVIDER') window.location.href = '/provider/provider-dashboard.html';
-        else if (data.user.role === 'ADMIN') window.location.href = '/admin/admin-dashboard.html';
-        else if (data.user.role === 'SUPER_ADMIN') window.location.href = '/superadmin/superadmin-dashboard.html';
+        setTimeout(() => {
+          if (redirectParam && !redirectParam.includes('login.html')) {
+            window.location.href = redirectParam;
+          } else if (data.user.role === 'super_admin') {
+            window.location.href = 'superadmin-dashboard.html';
+          } else if (data.user.role === 'admin') {
+            window.location.href = 'admin-dashboard.html';
+          } else {
+            // Customer / Provider default to homepage or appropriate area
+            window.location.href = 'index.html';
+          }
+        }, 600);
 
       } catch (err) {
-        errorMsg.textContent = err.message;
+        msg.textContent = 'Network error. Please try again.';
+        msg.style.color = '#9e2a2b';
       }
     });
   </script>
