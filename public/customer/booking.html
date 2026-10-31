@@ -24,7 +24,7 @@
 
     if (!bookingData || !user) {
       alert('Session expired or missing data.');
-      window.location.href = 'packages.html';
+      window.location.href = '../packages.html';
     } else {
       document.getElementById('summary').innerHTML = `
         <p><strong>Travelers:</strong> ${bookingData.travelers}</p>

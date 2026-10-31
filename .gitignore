@@ -1,0 +1,14 @@
+# Dependency folders (NEVER push to Git)
+node_modules/
+
+# Local environment & secret credentials
+.env
+.env.local
+
+# Log files
+*.log
+npm-debug.log*
+
+# OS-generated metadata files
+.DS_Store
+Thumbs.db

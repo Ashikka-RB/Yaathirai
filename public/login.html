@@ -134,6 +134,24 @@
       margin-top: 4px;
     }
 
+    .auth-switch {
+      margin-top: 14px;
+      text-align: center;
+      font-family: "Space Mono", monospace;
+      font-size: 0.72rem;
+      color: #6f5f56;
+    }
+
+    .auth-switch a {
+      color: var(--burgundy);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+
     .demo-credentials {
       margin-top: 24px;
       padding-top: 20px;
@@ -216,13 +234,15 @@
       <p class="auth-msg" id="authMsg" role="status" aria-live="polite"></p>
     </form>
 
+    <p class="auth-switch">New to Yaathirai? <a href="register.html">Create an account</a></p>
+
     <div class="demo-credentials">
       <p class="demo-title">Quick Demo Login:</p>
       <div class="demo-btns">
-        <button type="button" class="demo-btn" onclick="fillCreds('admin@yaathirai.com', 'admin123')">Admin</button>
-        <button type="button" class="demo-btn" onclick="fillCreds('superadmin@yaathirai.com', 'admin123')">Super Admin</button>
-        <button type="button" class="demo-btn" onclick="fillCreds('selvam@tntours.com', 'admin123')">Provider</button>
-        <button type="button" class="demo-btn" onclick="fillCreds('kavitha@example.com', 'admin123')">Customer</button>
+        <button type="button" class="demo-btn" onclick="loginDemo('admin@yaathirai.com', 'admin123')">Admin</button>
+        <button type="button" class="demo-btn" onclick="loginDemo('superadmin@yaathirai.com', 'admin123')">Super Admin</button>
+        <button type="button" class="demo-btn" onclick="loginDemo('selvam@tntours.com', 'admin123')">Provider</button>
+        <button type="button" class="demo-btn" onclick="loginDemo('kavitha@example.com', 'admin123')">Customer</button>
       </div>
     </div>
 
@@ -236,6 +256,11 @@
       document.getElementById('authMsg').textContent = '';
     }
 
+    function loginDemo(email, pass) {
+      fillCreds(email, pass);
+      document.getElementById('loginForm').requestSubmit();
+    }
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const msg = document.getElementById('authMsg');
@@ -246,19 +271,20 @@
       msg.style.color = 'var(--burgundy)';
 
       try {
-        const res = await fetch('/api/auth/login', {
+        const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
         });
 
         const data = await res.json();
-        if (!res.ok || !data.success) {
+        if (!res.ok || !data.user) {
           msg.textContent = data.error || 'Login failed. Please check credentials.';
           msg.style.color = '#9e2a2b';
           return;
         }
 
+        localStorage.setItem('user', JSON.stringify(data.user));
         msg.textContent = 'Success! Redirecting...';
         msg.style.color = '#2e6930';
 
@@ -269,12 +295,13 @@
         setTimeout(() => {
           if (redirectParam && !redirectParam.includes('login.html')) {
             window.location.href = redirectParam;
-          } else if (data.user.role === 'super_admin') {
-            window.location.href = 'superadmin-dashboard.html';
-          } else if (data.user.role === 'admin') {
-            window.location.href = 'admin-dashboard.html';
+          } else if (data.user.role === 'SUPER_ADMIN' || data.user.role === 'ADMIN') {
+            window.location.href = 'admin/admin-dashboard.html';
+          } else if (data.user.role === 'PROVIDER') {
+            window.location.href = 'provider/dashboard.html';
+          } else if (data.user.role === 'CUSTOMER') {
+            window.location.href = 'customer/customer-dashboard.html';
           } else {
-            // Customer / Provider default to homepage or appropriate area
             window.location.href = 'index.html';
           }
         }, 600);
