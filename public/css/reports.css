@@ -1,0 +1,156 @@
+/* =========================================================
+   reports.css — Admin: Reports & Analytics page only
+   Uses the design tokens defined in admin.css
+   ========================================================= */
+
+.rp-filters {
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.rp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rp-label {
+  font-family: "Space Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rp-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 44px;
+}
+
+.rp-form-error {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.rp-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  margin: 16px 0 24px;
+}
+
+.rp-state-error {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-style: solid;
+  border-color: var(--danger);
+}
+
+.rp-state-error p {
+  margin-bottom: 12px;
+}
+
+.rp-range {
+  font-family: "Space Mono", monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 12px 0 16px;
+}
+
+.rp-note {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.rp-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.rp-grid .admin-card {
+  margin-bottom: 0;
+}
+
+.rp-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 28px 16px;
+}
+
+.rp-num {
+  font-family: "Space Mono", monospace;
+  white-space: nowrap;
+}
+
+/* status chips (covers the "completed" state, which admin.css lacks) */
+.rp-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.rp-chip-confirmed { background: var(--success-bg); color: var(--success); }
+.rp-chip-pending { background: var(--warning-bg); color: var(--warning); }
+.rp-chip-cancelled { background: var(--danger-bg); color: var(--danger); }
+.rp-chip-completed { background: var(--info-bg); color: var(--info); }
+
+/* monthly trend bars */
+.rp-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rp-trend-row {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.rp-trend-month {
+  font-family: "Space Mono", monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.rp-bar-track {
+  background: var(--burgundy-soft);
+  border-radius: var(--radius-pill);
+  height: 14px;
+  overflow: hidden;
+}
+
+.rp-bar-fill {
+  height: 100%;
+  min-width: 2px;
+  background: var(--burgundy);
+  border-radius: var(--radius-pill);
+}
+
+.rp-trend-meta {
+  grid-column: 2;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: -8px;
+}
+
+@media (max-width: 960px) {
+  .rp-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
