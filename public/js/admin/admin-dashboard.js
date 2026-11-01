@@ -172,7 +172,7 @@ async function fetchPendingApprovals() {
       html += `
         <div class="approval-item">
           <div class="approval-item-left">
-            <img class="approval-thumb" src="${YaathiraiAdmin.escapeHTML(pkg.image || 'images/ooty.jpg')}" alt="${YaathiraiAdmin.escapeHTML(pkg.title)}" />
+            <img class="approval-thumb" src="${YaathiraiAdmin.escapeHTML(pkg.image || '../images/ooty.jpg')}" alt="${YaathiraiAdmin.escapeHTML(pkg.title)}" />
             <div class="approval-info">
               <h4>${YaathiraiAdmin.escapeHTML(pkg.title)}</h4>
               <p class="approval-sub">${YaathiraiAdmin.escapeHTML(pkg.destination_name)} · By ${YaathiraiAdmin.escapeHTML(pkg.provider_name)}</p>

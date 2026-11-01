@@ -13,13 +13,13 @@ window.YaathiraiAdmin = (() => {
       });
 
       if (!res.ok) {
-        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        window.location.href = '../login.html?redirect=' + encodeURIComponent(window.location.pathname);
         return null;
       }
 
       const data = await res.json();
       if (!data.success || !data.user) {
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
         return null;
       }
 
@@ -28,7 +28,7 @@ window.YaathiraiAdmin = (() => {
       // Check role authorization
       if (!requiredRoles.includes(currentUser.role)) {
         alert('Access denied: You do not have administrator permissions.');
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
         return null;
       }
 
@@ -37,7 +37,7 @@ window.YaathiraiAdmin = (() => {
       return currentUser;
     } catch (err) {
       console.error('[Auth Error]', err);
-      window.location.href = 'login.html';
+      window.location.href = '../login.html';
       return null;
     }
   }
@@ -77,7 +77,7 @@ window.YaathiraiAdmin = (() => {
     } catch (e) {
       // Ignore network fail on logout
     }
-    window.location.href = 'login.html';
+    window.location.href = '../login.html';
   }
 
   function showToast(message, type = 'info') {

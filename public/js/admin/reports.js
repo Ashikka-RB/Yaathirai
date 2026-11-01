@@ -214,7 +214,7 @@
       if (seq !== requestSeq) return; // a newer request superseded this one
 
       if (res.status === 401) {
-        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        window.location.href = '../login.html?redirect=' + encodeURIComponent(window.location.pathname);
         return;
       }
 

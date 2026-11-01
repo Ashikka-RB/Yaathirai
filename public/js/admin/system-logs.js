@@ -146,7 +146,7 @@
       if (seq !== loadSeq) return;
 
       if (res.status === 401) {
-        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        window.location.href = '../login.html?redirect=' + encodeURIComponent(window.location.pathname);
         return;
       }
       let data = null;

@@ -180,7 +180,7 @@ async function viewProviderDetails(userId) {
     } else {
       pkgContainer.innerHTML = packages.map((pkg) => `
         <div class="pkg-mini-card">
-          <img class="pkg-mini-img" src="${YaathiraiAdmin.escapeHTML(pkg.image || 'images/ooty.jpg')}" alt="${YaathiraiAdmin.escapeHTML(pkg.title)}" />
+          <img class="pkg-mini-img" src="${YaathiraiAdmin.escapeHTML(pkg.image || '../images/ooty.jpg')}" alt="${YaathiraiAdmin.escapeHTML(pkg.title)}" />
           <div style="min-width:0; flex:1;">
             <strong style="font-size:0.88rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${YaathiraiAdmin.escapeHTML(pkg.title)}</strong>
             <span class="mono-cell" style="font-size:0.75rem; color:var(--burgundy); font-weight:700;">${YaathiraiAdmin.formatCurrency(pkg.price)}</span>

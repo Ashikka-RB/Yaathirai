@@ -51,7 +51,7 @@
     }
     const res = await fetch(url, opts);
     if (res.status === 401) {
-      window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+      window.location.href = '../login.html?redirect=' + encodeURIComponent(window.location.pathname);
       throw new Error('Your session has expired. Please log in again.');
     }
     let data = null;
