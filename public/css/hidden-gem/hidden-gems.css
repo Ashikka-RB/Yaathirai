@@ -1,0 +1,772 @@
+
+/* =========================================================
+   HIDDEN GEMS EXPLORER
+   All styles scoped under .hg-app to prevent conflicts
+   with other Yaathirai pages.
+========================================================= */
+
+/* 1. ROOT VARIABLES AND BASE STYLES */
+
+.hg-app {
+    --forest: #2E4A3B;
+    --moss: #5E7F57;
+    --terra: #B65E3C;
+    --sand: #F4EDE0;
+    --clay: #E7D9C3;
+    --ink: #24211C;
+    --muted: #6E675B;
+    --card: #fff;
+    --line: #E4D9C6;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+
+    margin: 0;
+    background: var(--sand);
+    color: var(--ink);
+    font: 16px/1.6 'DM Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hg-app *,
+.hg-app *::before,
+.hg-app *::after {
+    box-sizing: border-box;
+}
+
+.hg-app h1,
+.hg-app h2,
+.hg-app h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -.01em;
+    line-height: 1.15;
+}
+
+.hg-app a {
+    color: inherit;
+}
+
+.hg-app img {
+    max-width: 100%;
+    display: block;
+}
+
+.hg-app :focus-visible {
+    outline: 3px solid var(--terra);
+    outline-offset: 2px;
+}
+
+/* 2. HEADER AND NAVIGATION */
+
+.hg-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px clamp(16px, 4vw, 48px);
+    background: rgba(244, 237, 224, .88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+}
+
+.hg-brand {
+    font: 800 24px 'Fraunces', serif;
+    text-decoration: none;
+    color: var(--forest);
+}
+
+.hg-nav {
+    display: flex;
+    gap: 6px;
+}
+
+.hg-nav a {
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 99px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background .25s;
+}
+
+.hg-nav a:hover,
+.hg-nav a.is-on {
+    background: var(--forest);
+    color: #fff;
+}
+
+.hg-count {
+    display: inline-block;
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: 99px;
+    background: var(--terra);
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* 3. COMMON CONTAINER */
+
+.hg-wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 48px);
+}
+
+/* 4. HERO SECTION */
+
+.hg-hero {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(
+        180deg,
+        #223a2e,
+        #2E4A3B 55%,
+        #4d6b49
+    );
+    padding: clamp(56px, 9vw, 110px) 0 clamp(70px, 10vw, 120px);
+}
+
+.hg-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--hero-art) center/cover no-repeat;
+    opacity: .35;
+}
+
+.hg-hero .hg-wrap {
+    position: relative;
+}
+
+.hg-eyebrow {
+    font: 12px 'Space Mono', monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #f0c9a8;
+}
+
+.hg-hero h1 {
+    font-size: clamp(34px, 6vw, 66px);
+    max-width: 14ch;
+    margin: 10px 0 14px;
+}
+
+.hg-hero p.lead {
+    max-width: 52ch;
+    color: #e6efe5;
+    font-size: 18px;
+    margin: 0 0 26px;
+}
+
+/* 5. SEARCH BAR */
+
+.hg-search {
+    display: flex;
+    gap: 8px;
+    max-width: 640px;
+    background: #fff;
+    border-radius: 99px;
+    padding: 6px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .25);
+}
+
+.hg-search input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding: 12px 18px;
+    font: inherit;
+    color: var(--ink);
+    min-width: 0;
+}
+
+.hg-search input:focus {
+    outline: none;
+}
+
+/* 6. BUTTONS */
+
+.hg-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    cursor: pointer;
+    font: 600 14px 'DM Sans', sans-serif;
+    text-decoration: none;
+    background: var(--terra);
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 99px;
+    transition: transform .25s var(--ease), background .25s;
+}
+
+.hg-btn:hover {
+    background: #9a4a2c;
+    transform: translateY(-2px);
+}
+
+.hg-btn--ghost {
+    background: transparent;
+    color: var(--forest);
+    border: 1.5px solid var(--forest);
+}
+
+.hg-btn--ghost:hover {
+    background: var(--forest);
+    color: #fff;
+}
+
+/* 7. SECTIONS AND HEADINGS */
+
+.hg-section {
+    padding: 44px 0 6px;
+}
+
+.hg-sec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.hg-sec-head h2 {
+    font-size: clamp(24px, 3.4vw, 34px);
+}
+
+.hg-sec-head p {
+    margin: 4px 0 0;
+    color: var(--muted);
+}
+
+.hg-note {
+    background: #fbf3df;
+    border: 1px solid #ecd9a8;
+    color: #6b4e12;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    margin-top: -30px;
+    position: relative;
+}
+
+/* 8. CATEGORY CARDS */
+
+.hg-cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.hg-cat {
+    border: 1.5px solid var(--line);
+    background: var(--card);
+    border-radius: 18px;
+    padding: 16px 12px;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    transition: transform .3s var(--ease), border-color .2s, background .2s;
+}
+
+.hg-cat:hover {
+    transform: translateY(-4px);
+    border-color: var(--moss);
+}
+
+.hg-cat.is-on {
+    background: var(--forest);
+    color: #fff;
+    border-color: var(--forest);
+}
+
+.hg-cat span {
+    font-size: 24px;
+    display: block;
+}
+
+.hg-cat b {
+    display: block;
+    font-size: 14px;
+    line-height: 1.25;
+    margin-top: 6px;
+}
+
+.hg-cat small {
+    opacity: .7;
+}
+
+/* 9. FILTERS */
+
+.hg-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: end;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px;
+    margin-top: 6px;
+}
+
+.hg-filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font: 11px 'Space Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    flex: 1 1 150px;
+}
+
+.hg-filters select {
+    font: 15px 'DM Sans', sans-serif;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* 10. DESTINATION GRID */
+
+.hg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 22px;
+}
+
+/* 11. DESTINATION CARDS */
+
+.hg-card {
+    position: relative;
+    background: var(--card);
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+
+.hg-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 40px rgba(46, 74, 59, .16);
+}
+
+.hg-card-img {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    position: relative;
+    background: var(--clay);
+}
+
+.hg-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .7s var(--ease);
+}
+
+.hg-card:hover .hg-card-img img {
+    transform: scale(1.06);
+}
+
+.hg-badge {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    background: rgba(255, 255, 255, .92);
+    color: var(--forest);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+/* 12. WISHLIST BUTTON */
+
+.hg-heart {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255, 255, 255, .92);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    color: #8b8478;
+    transition: transform .25s var(--ease), color .2s;
+}
+
+.hg-heart:hover {
+    transform: scale(1.12);
+}
+
+.hg-heart[aria-pressed=true] {
+    color: #c23a3a;
+}
+
+/* 13. CARD CONTENT */
+
+.hg-card-body {
+    padding: 16px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.hg-meta {
+    font: 11px 'Space Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--moss);
+}
+
+.hg-card h3 {
+    font-size: 21px;
+}
+
+.hg-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14.5px;
+}
+
+.hg-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 2px 0;
+}
+
+.hg-facts div {
+    background: var(--sand);
+    border-radius: 12px;
+    padding: 8px 10px;
+}
+
+.hg-facts dt {
+    font: 10px 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+}
+
+.hg-facts dd {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.hg-why {
+    font-size: 13.5px !important;
+    color: var(--ink) !important;
+}
+
+.hg-card .hg-btn {
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+/* 14. MAP SECTION */
+
+.hg-mapbox {
+    height: 420px;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    margin-top: 16px;
+    background: var(--clay);
+}
+
+/* 15. EMPTY AND LOADING STATES */
+
+.hg-state {
+    text-align: center;
+    padding: 56px 20px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px dashed var(--line);
+    border-radius: 22px;
+}
+
+.hg-state h3 {
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.hg-skel {
+    height: 260px;
+    border-radius: 22px;
+    background: linear-gradient(
+        90deg,
+        #eadfca 25%,
+        #f4ecdc 50%,
+        #eadfca 75%
+    );
+    background-size: 200% 100%;
+    animation: hgsh 1.2s infinite;
+}
+
+.hg-skel--hero {
+    height: 300px;
+    border-radius: 0;
+    margin-bottom: 30px;
+}
+
+.hg-loading {
+    padding-bottom: 40px;
+}
+
+.hg-loading .hg-grid {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+@keyframes hgsh {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* 16. DESTINATION DETAIL PAGE */
+
+.hg-detail {
+    padding: 28px 0 60px;
+}
+
+.hg-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--forest);
+}
+
+/* 17. IMAGE GALLERY */
+
+.hg-gallery {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 12px;
+}
+
+.hg-gallery-main {
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: var(--clay);
+}
+
+.hg-gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hg-thumbs {
+    display: grid;
+    gap: 12px;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.hg-thumb {
+    border: 2px solid transparent;
+    padding: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--clay);
+    transition: border-color .2s, transform .3s var(--ease);
+}
+
+.hg-thumb:hover {
+    transform: scale(1.03);
+}
+
+.hg-thumb.is-on {
+    border-color: var(--terra);
+}
+
+.hg-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 18. DESTINATION DETAIL HEADER */
+
+.hg-detail-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin: 26px 0 10px;
+}
+
+.hg-detail-head h1 {
+    font-size: clamp(30px, 5vw, 48px);
+}
+
+/* 19. DETAIL PAGE LAYOUT */
+
+.hg-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    margin-top: 20px;
+}
+
+.hg-block {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+
+.hg-block h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.hg-block ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.hg-block li {
+    margin: 4px 0;
+}
+
+/* 20. DETAIL TAGS AND SIDEBAR */
+
+.hg-tag {
+    display: inline-block;
+    font: 10px 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    background: #fbf3df;
+    color: #8a5f10;
+    border-radius: 6px;
+    padding: 2px 7px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.hg-side dl {
+    margin: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.hg-side dt {
+    font: 11px 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+}
+
+.hg-side dd {
+    margin: 2px 0 0;
+    font-weight: 500;
+}
+
+/* 21. TOAST NOTIFICATION */
+
+.hg-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translate(-50%, 30px);
+    background: var(--ink);
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 99px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .35s var(--ease);
+    z-index: 60;
+    font-size: 14px;
+}
+
+.hg-toast.is-on {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* 22. FOOTER */
+
+.hg-footer {
+    padding: 26px clamp(16px, 4vw, 48px);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+}
+
+/* 23. TABLET RESPONSIVENESS */
+
+@media (max-width: 860px) {
+    .hg-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .hg-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .hg-thumbs {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: none;
+    }
+
+    .hg-thumb {
+        aspect-ratio: 4 / 3;
+    }
+}
+
+/* 24. MOBILE RESPONSIVENESS */
+
+@media (max-width: 520px) {
+    .hg-search {
+        flex-direction: column;
+        border-radius: 24px;
+    }
+
+    .hg-nav a {
+        padding: 8px 10px;
+    }
+
+    .hg-mapbox {
+        height: 320px;
+    }
+}
+
+/* 25. REDUCED MOTION ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+    .hg-app * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

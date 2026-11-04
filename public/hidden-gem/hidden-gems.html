@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hidden Gems Explorer · Yaathirai</title>
+  <meta name="description" content="Discover lesser-known places across Tamil Nadu.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;600&family=Space+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+  <link rel="stylesheet" href="../css/hidden-gem/hidden-gems.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+  <script defer src="../js/hidden-gem/hidden-gems-data.js"></script>
+  <script defer src="../js/hidden-gem/hidden-gems.js"></script>   
+</head>
+<body class="hg-app">
+  <header class="hg-header">
+    <a class="hg-brand" href="index.html" aria-label="Yaathirai home">yaathirai.</a>
+    <nav class="hg-nav" aria-label="Hidden gems navigation">
+      <a href="index.html">Home</a>
+      <a href="#/" data-nav="home">Hidden Gems</a>
+      <a href="#/saved" data-nav="saved">Saved <span class="hg-count" id="hgSavedCount">0</span></a>
+    </nav>
+  </header>
+  <main id="hgRoot" tabindex="-1">
+    <div class="hg-loading" aria-busy="true"><div class="hg-skel hg-skel--hero"></div><div class="hg-grid"><div class="hg-skel"></div><div class="hg-skel"></div><div class="hg-skel"></div></div></div>
+    <noscript><p class="hg-state">JavaScript is required to explore hidden gems.</p></noscript>
+  </main>
+  <footer class="hg-footer">Yaathirai · Hidden Gems Explorer · Sample content is illustrative and unverified — confirm details locally before travelling.</footer>
+  <div class="hg-toast" id="hgToast" role="status" aria-live="polite"></div>
+</body>
+</html>
