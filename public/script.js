@@ -576,22 +576,76 @@ bootHero();
 })();
 
 
+
 // =========================================
-// YAATHIRAI — POPULAR PACKAGES (horizontal carousel)
+// YAATHIRAI — POPULAR PACKAGES
+// Horizontal carousel with real DB integration
 // =========================================
 
-(() => {
+(async () => {
   const root = document.getElementById("popular-packages");
-  const data = window.YAATHIRAI_PACKAGES;
-
-  if (!root || !Array.isArray(data) || !data.length) return;
+  if (!root) return;
 
   const book = document.getElementById("ppBook");
   const stage = document.getElementById("ppStage");
 
   if (!book || !stage) return;
 
-  const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // Use static packages as fallback
+  let data = Array.isArray(window.YAATHIRAI_PACKAGES)
+    ? [...window.YAATHIRAI_PACKAGES]
+    : [];
+
+  // Fetch packages from the backend
+  try {
+    const res = await fetch("/api/packages");
+
+    if (res.ok) {
+      const dbPackages = await res.json();
+
+      if (Array.isArray(dbPackages) && dbPackages.length > 0) {
+        data = dbPackages.map((p) => {
+          const days = parseInt(p.duration_days, 10) || 1;
+          const nights = Math.max(1, days - 1);
+
+          return {
+            id: String(p.package_id),
+            name: p.title,
+            tagline: p.description
+              ? p.description.slice(0, 48) + "..."
+              : "",
+            destination: p.destination_name || "Tamil Nadu",
+            region: p.category_name || "Tamil Nadu",
+            image: p.image || "images/ooty.jpg",
+            imageAlt: p.title,
+            description: p.description,
+            days: days,
+            nights: nights,
+            guests: p.capacity || 2,
+            price: p.price,
+            priceUnit: "person"
+          };
+        });
+
+        window.YAATHIRAI_PACKAGES = data;
+      }
+    } else {
+      console.warn(
+        "[Popular Packages] API request failed. Using static packages."
+      );
+    }
+  } catch (err) {
+    console.warn(
+      "[Popular Packages] Fallback to packages-data:",
+      err.message
+    );
+  }
+
+  if (!data.length) return;
+
+  const mqReduce = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  );
 
   const PERSON =
     '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20c.6-4 3.3-6 7-6s6.4 2 7 6"></path></svg>';
@@ -599,42 +653,84 @@ bootHero();
   const ROUTE =
     '<svg class="pp-route" viewBox="0 0 1200 420" preserveAspectRatio="none" aria-hidden="true"><path d="M10 210 C 200 40, 330 400, 570 230 S 920 60, 1190 200"></path></svg>';
 
+  // Escape HTML to prevent unsafe values being inserted
   const esc = (value) =>
-    String(value).replace(/[&<>"']/g, (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    String(value ?? "").replace(/[&<>"']/g, (c) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[c])
     );
 
+  // Generate package card HTML
   function cardHTML(pkg, index) {
     const duration = `${pkg.days}D ${pkg.nights}N`;
-    const price = pkg.price == null ? "₹ ——" : `₹ ${Number(pkg.price).toLocaleString("en-IN")}`;
 
-    // Same route pattern the Destinations section already uses.
+    const numericPrice = Number(pkg.price);
+
+    const price =
+      pkg.price == null ||
+      pkg.price === "" ||
+      !Number.isFinite(numericPrice)
+        ? "₹ ——"
+        : `₹ ${numericPrice.toLocaleString("en-IN")}`;
+
+    // Package details page link
     const href =
-      `packages.html?destination=${encodeURIComponent(pkg.destination)}&package=${encodeURIComponent(pkg.id)}`;
+      `packages.html?destination=${encodeURIComponent(
+        pkg.destination || ""
+      )}&package=${encodeURIComponent(pkg.id || "")}`;
 
     return `
       <article class="pp-card" style="--d:${Math.min(index, 3) * 110 + 250}ms">
         <a class="pp-link" href="${href}">
           <div class="pp-photo">
-            <img src="${esc(pkg.image)}" alt="${esc(pkg.imageAlt || pkg.destination)}" loading="lazy" decoding="async" />
-            <h3 class="pp-name">${esc(pkg.name)}</h3>
-            <p class="pp-price"><strong>${price}</strong> / ${esc(pkg.priceUnit || "person")}</p>
+
+            <img
+              src="${esc(pkg.image || "images/ooty.jpg")}"
+              alt="${esc(pkg.imageAlt || pkg.destination || "Package")}"
+              loading="lazy"
+              decoding="async"
+              onerror="this.onerror=null; this.src='images/ooty.jpg';"
+            />
+
+            <h3 class="pp-name">${esc(pkg.name || "Untitled Package")}</h3>
+
+            <p class="pp-price">
+              <strong>${price}</strong> /
+              ${esc(pkg.priceUnit || "person")}
+            </p>
+
             <span class="pp-go" aria-hidden="true">↗</span>
           </div>
+
           <ul class="pp-meta">
-            <li>${PERSON}<span>${esc(pkg.guests)} guests</span></li>
-            <li><span>${duration}</span></li>
+            <li>${PERSON}<span>${esc(pkg.guests || 2)} guests</span></li>
+            <li><span>${esc(duration)}</span></li>
           </ul>
+
           <p class="pp-desc">${esc(pkg.tagline || "")}</p>
         </a>
-      </article>`;
+      </article>
+    `;
   }
 
+  // Display package cards
   stage.innerHTML =
-    `<div class="pp-row" style="--pp-n:${data.length}">${ROUTE}${data.map(cardHTML).join("")}</div>`;
+    `<div class="pp-row" style="--pp-n:${data.length}">
+      ${ROUTE}
+      ${data.map(cardHTML).join("")}
+    </div>`;
 
-  const scrollStep = () => Math.round(stage.clientWidth * 0.5);
-  const behavior = () => (mqReduce.matches ? "auto" : "smooth");
+  // Carousel scrolling
+  const scrollStep = () =>
+    Math.round(stage.clientWidth * 0.5);
+
+  const behavior = () =>
+    mqReduce.matches ? "auto" : "smooth";
 
   function canScroll(dir) {
     return dir < 0
@@ -644,31 +740,38 @@ bootHero();
 
   function moveBy(dir) {
     if (!canScroll(dir)) return;
-    stage.scrollBy({ left: dir * scrollStep(), behavior: behavior() });
+
+    stage.scrollBy({
+      left: dir * scrollStep(),
+      behavior: behavior()
+    });
   }
 
-  // Reflect whether more packages exist on each side (drives the subtle cues).
+  // Update left and right scroll indicators
   let cueFrame = 0;
 
   function updateCues() {
     cueFrame = 0;
+
     book.classList.toggle("can-prev", canScroll(-1));
     book.classList.toggle("can-next", canScroll(1));
   }
 
   const requestCues = () => {
-    if (!cueFrame) cueFrame = window.requestAnimationFrame(updateCues);
+    if (!cueFrame) {
+      cueFrame = window.requestAnimationFrame(updateCues);
+    }
   };
 
-  stage.addEventListener("scroll", requestCues, { passive: true });
+  stage.addEventListener("scroll", requestCues, {
+    passive: true
+  });
+
   window.addEventListener("resize", requestCues);
 
-  /*
-    Edge-triggered movement (mouse only): entering the left/right edge zone of
-    the track advances once by half a viewport-width of the track. Re-arming
-    requires leaving the zone, and a cooldown guards rapid in/out flicking.
-  */
+  // Mouse edge scrolling
   const COOLDOWN = 900;
+
   let edge = 0;
   let lockedUntil = 0;
 
@@ -676,6 +779,7 @@ bootHero();
     if (next === edge) return;
 
     edge = next;
+
     book.classList.toggle("edge-prev", edge < 0);
     book.classList.toggle("edge-next", edge > 0);
 
@@ -686,6 +790,7 @@ bootHero();
     if (now < lockedUntil || !canScroll(edge)) return;
 
     lockedUntil = now + COOLDOWN;
+
     moveBy(edge);
   }
 
@@ -694,29 +799,50 @@ bootHero();
 
     const rect = stage.getBoundingClientRect();
     const x = event.clientX - rect.left;
-    const zone = Math.min(150, Math.max(64, rect.width * 0.12));
 
-    setEdge(x < zone ? -1 : x > rect.width - zone ? 1 : 0);
+    const zone = Math.min(
+      150,
+      Math.max(64, rect.width * 0.12)
+    );
+
+    setEdge(
+      x < zone
+        ? -1
+        : x > rect.width - zone
+          ? 1
+          : 0
+    );
   });
 
-  stage.addEventListener("pointerleave", () => setEdge(0));
+  stage.addEventListener("pointerleave", () => {
+    setEdge(0);
+  });
 
-  // Keyboard: arrow keys scroll the row; Tab moves through package links.
+  // Keyboard navigation
   stage.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+    if (
+      event.key === "ArrowRight" ||
+      event.key === "ArrowLeft"
+    ) {
       event.preventDefault();
-      moveBy(event.key === "ArrowRight" ? 1 : -1);
+
+      moveBy(
+        event.key === "ArrowRight" ? 1 : -1
+      );
     }
   });
 
-  // One-time entrance.
+  // Entrance animation
   if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) {
-        root.classList.add("is-in");
-        observer.disconnect();
-      }
-    }, { threshold: 0.15 });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          root.classList.add("is-in");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
 
     observer.observe(root);
   } else {
@@ -725,7 +851,6 @@ bootHero();
 
   updateCues();
 })();
-
 
 // =========================================
 // YAATHIRAI — PLAN YOUR NEXT-CATION

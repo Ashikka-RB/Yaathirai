@@ -158,7 +158,20 @@ window.YaathiraiAdmin = (() => {
 
   document.addEventListener('DOMContentLoaded', initMobileSidebar);
 
+  function resolveImagePath(img) {
+    if (!img || !String(img).trim()) return "../images/ooty.jpg";
+    img = String(img).trim();
+    if (img.startsWith("http://") || img.startsWith("https://") || img.startsWith("data:")) return img;
+    if (img.startsWith("../")) return img;
+    if (img.startsWith("/images/")) return ".." + img;
+    if (img.startsWith("images/")) return "../" + img;
+    if (!img.includes("/") && !img.includes("\\")) return "../images/" + img;
+    if (img.startsWith("/")) return ".." + img;
+    return "../" + img;
+  }
+
   return {
+    resolveImagePath,
     checkAuth,
     logout,
     showToast,

@@ -41,7 +41,7 @@
 
   <script>
     const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || user.role !== 'CUSTOMER') {
+    if (!user || String(user.role || '').toUpperCase() !== 'CUSTOMER') {
       window.location.href = '../login.html';
     } else {
       document.getElementById('welcomeHeading').textContent = `Welcome, ${user.name}!`;

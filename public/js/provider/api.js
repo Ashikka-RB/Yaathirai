@@ -6,7 +6,7 @@
   const session = () => { try { return JSON.parse(localStorage.getItem('user')); } catch (e) { return null; } };
   const devId = sessionStorage.getItem('providerDevId'); // standalone dev server only (provider-dev-server.js)
   const user = session();
-  if (!devId && (!user || user.role !== 'PROVIDER' || !user.token)) { document.documentElement.hidden = true; location.replace('/login.html'); }
+  if (!devId && (!user || String(user.role || '').toUpperCase() !== 'PROVIDER' || !user.token)) { document.documentElement.hidden = true; location.replace('/login.html'); }
   class ApiError extends Error { constructor(status, message, details) { super(message); this.status = status; this.details = details; } }
   async function req(method, path, body) {
     const headers = { Accept: 'application/json' };
