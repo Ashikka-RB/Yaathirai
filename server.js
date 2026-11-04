@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const db = require('./config/db'); // MySQL connection pool
+const { signToken, verifyToken } = require('./config/auth-token');
+const { handleProviderRequest } = require('./src/modules/provider'); // Local Tourist / Provider module
 
 const PORT = 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -38,6 +40,25 @@ function sendJSON(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
+// Resolves the logged-in Local Tourist (DB role PROVIDER) for /api/provider/* from the signed token.
+// The role is re-read from MySQL on every call, so blocking/changing a user takes effect immediately.
+// DEMO_SAMPLE_DATA: the provider module still uses in-memory MOCK packages keyed 'prov-1'; this lets the
+// seeded demo account from schema.sql see that sample data. Remove when package data moves to MySQL.
+const DEMO_SAMPLE_DATA = { 'selvam@tntours.com': 'prov-1' };
+async function authenticateProvider(req) {
+  const m = /^Bearer (.+)$/.exec(req.headers.authorization || '');
+  const claims = m && verifyToken(m[1]);
+  if (!claims) return null;
+  const [rows] = await db.execute('SELECT user_id, name, email, role, status FROM users WHERE user_id = ?', [claims.id]);
+  if (rows.length === 0) return null;
+  const u = rows[0];
+  return {
+    id: DEMO_SAMPLE_DATA[u.email] || String(u.user_id),
+    name: u.name, email: u.email, role: u.role,
+    status: u.status === 'ACTIVE' ? 'approved' : String(u.status).toLowerCase()
+  };
+}
+
 const server = http.createServer(async (req, res) => {
   let { url } = req;
   const { method } = req;
@@ -47,6 +68,11 @@ const server = http.createServer(async (req, res) => {
   // ==========================================
   if (url.startsWith('/api/')) {
 
+    // 0. LOCAL TOURIST / PROVIDER MODULE: /api/provider/* (requires a valid PROVIDER login token)
+    if (url.startsWith('/api/provider')) {
+      if (await handleProviderRequest(req, res, { resolveUser: authenticateProvider })) return;
+    }
+
     // 1. REGISTER ENDPOINT: POST /api/register
     if (url === '/api/register' && method === 'POST') {
       try {
@@ -55,6 +81,10 @@ const server = http.createServer(async (req, res) => {
 
         if (!name || !email || !password || !role) {
           return sendJSON(res, 400, { error: 'Missing required fields: name, email, password, role' });
+        }
+        // Public sign-up may only create Customers or Local Tourists (Admin / Super Admin accounts are never self-registered).
+        if (!['CUSTOMER', 'PROVIDER'].includes(role)) {
+          return sendJSON(res, 400, { error: 'Invalid account type' });
         }
 
         const query = 'INSERT INTO users (name, email, password, mobile, role) VALUES (?, ?, ?, ?, ?)';
@@ -102,7 +132,8 @@ const server = http.createServer(async (req, res) => {
             id: user.user_id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
+            token: signToken({ id: user.user_id, role: user.role }) // used by protected APIs (/api/provider/*)
           }
         });
       } catch (err) {

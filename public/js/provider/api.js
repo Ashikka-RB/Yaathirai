@@ -1,16 +1,23 @@
 /* All provider fetch() calls live here. Base URL: /api/provider */
 (function () {
   const BASE = '/api/provider';
+  // --- Access guard (same pattern as customer pages): only a logged-in PROVIDER (Local Tourist) may stay. ---
+  // Real enforcement is on the server (/api/provider/* checks the signed token); this just redirects early.
+  const session = () => { try { return JSON.parse(localStorage.getItem('user')); } catch (e) { return null; } };
+  const devId = sessionStorage.getItem('providerDevId'); // standalone dev server only (provider-dev-server.js)
+  const user = session();
+  if (!devId && (!user || user.role !== 'PROVIDER' || !user.token)) { document.documentElement.hidden = true; location.replace('/login.html'); }
   class ApiError extends Error { constructor(status, message, details) { super(message); this.status = status; this.details = details; } }
   async function req(method, path, body) {
     const headers = { Accept: 'application/json' };
     if (body !== undefined) headers['Content-Type'] = 'application/json';
-    const dev = sessionStorage.getItem('providerDevId'); // DEV ONLY: remove when real auth exists
-    if (dev) headers['X-Provider-Id'] = dev;
+    const u = session(); if (u && u.token) headers.Authorization = 'Bearer ' + u.token;
+    if (devId) headers['X-Provider-Id'] = devId; // ignored by server.js; only used by provider-dev-server.js
     let res;
     try { res = await fetch(BASE + path, { method, headers, body: body !== undefined ? JSON.stringify(body) : undefined }); }
     catch (e) { throw new ApiError(0, 'Cannot reach the server. Is it running?'); }
     let json = null; try { json = await res.json(); } catch (e) { /* non-JSON */ }
+    if (res.status === 401 && !devId) { localStorage.removeItem('user'); location.replace('/login.html'); } // expired or invalid login
     if (!res.ok || !json || !json.ok) throw new ApiError(res.status, (json && json.error && json.error.message) || 'Request failed', json && json.error && json.error.details);
     return json.data;
   }

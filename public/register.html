@@ -68,6 +68,21 @@
 
         if (!res.ok) throw new Error(data.error);
 
+        // Local Tourist: sign in with the existing /api/login and open the provider dashboard.
+        if (role === 'PROVIDER') {
+          const loginRes = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const loginData = await loginRes.json();
+          if (loginRes.ok && loginData.user && loginData.user.role === 'PROVIDER') {
+            localStorage.setItem('user', JSON.stringify(loginData.user));
+            window.location.href = 'provider/dashboard.html';
+            return;
+          }
+        }
+
         alert('Registration successful! Please login.');
         window.location.href = 'login.html';
 

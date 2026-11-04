@@ -40,11 +40,12 @@
   const shell = document.createElement('div'); shell.className = 'provider-shell';
   shell.innerHTML = `<aside class="provider-sidebar" id="pvSidebar"><a class="provider-brand" href="/">yaathirai.</a><div class="provider-brand-sub pv-mono">Local tourist portal</div>
     <nav class="provider-nav" aria-label="Provider navigation">${NAV.map((n, i) => `<a href="/provider/${n[2]}" class="${n[0] === active ? 'is-active' : ''}"${n[0] === active ? ' aria-current="page"' : ''}><span>0${i + 1}</span>${n[1]}</a>`).join('')}</nav>
-    <div class="provider-sidebar-foot">Mock data · in-memory only. Changes reset when the server restarts.</div></aside>
+    <div class="provider-sidebar-foot">Mock data · in-memory only. Changes reset when the server restarts.</div><button class="provider-logout" id="pvLogout" type="button">Log out</button></aside>
     <div class="provider-main"><header class="provider-topbar"><button class="pv-menu" aria-label="Open menu" id="pvMenu">☰</button><h1>${ui.esc(body.dataset.title || '')}</h1><span class="pv-user" id="pvUser">…</span></header>
     <div class="pv-banner">Demo build: packages, bookings, payments and reviews shown here are mock data, not real transactions.</div><div id="pvSlot"></div></div>`;
   main.parentNode.insertBefore(shell, main); ui.$('#pvSlot').appendChild(main);
   const toasts = document.createElement('div'); toasts.className = 'pv-toasts'; toasts.setAttribute('aria-live', 'polite'); body.appendChild(toasts);
   ui.$('#pvMenu').onclick = () => body.classList.toggle('nav-open');
+  ui.$('#pvLogout').onclick = () => { localStorage.removeItem('user'); sessionStorage.removeItem('providerDevId'); location.href = '/login.html'; };
   ProviderAPI.me().then((u) => { ui.$('#pvUser').textContent = u.name; ui.me = u; }).catch((e) => { ui.$('#pvUser').textContent = e.status === 401 || e.status === 403 ? 'Not signed in as provider' : 'Offline'; });
 })();
