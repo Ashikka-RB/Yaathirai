@@ -5,7 +5,7 @@ const memRepo = require('./memory.repository');
 const { HttpError } = require('../errors');
 
 function isMySQL() {
-  return db.isConnected && db.isConnected();
+  return true;
 }
 
 module.exports = {

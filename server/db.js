@@ -6,7 +6,11 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-require('dotenv').config();
+try {
+  require('dotenv').config();
+} catch (e) {
+  // dotenv is optional if not installed
+}
 
 let mysql;
 try {
@@ -558,6 +562,9 @@ function handleMemQuery(sql, params) {
   if (/FROM package_availability.*WHERE package_id =/i.test(norm)) {
     const pkgId = parseInt(params[0], 10);
     return memStore.package_availability.filter(a => a.package_id === pkgId);
+  }
+  if (/FROM package_availability/i.test(norm)) {
+    return memStore.package_availability.map(a => ({ ...a }));
   }
 
   // SELECT packages

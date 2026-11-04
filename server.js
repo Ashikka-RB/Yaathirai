@@ -5,7 +5,11 @@
 
 const http = require('http');
 const path = require('path');
-require('dotenv').config();
+try {
+  require('dotenv').config();
+} catch (e) {
+  // dotenv optional
+}
 
 const db = require('./server/db');
 const Router = require('./server/router');
