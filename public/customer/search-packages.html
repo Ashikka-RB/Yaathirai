@@ -50,7 +50,7 @@
             <p><strong>Destination:</strong> ${pkg.destination_name || 'N/A'}</p>
             <p><strong>Duration:</strong> ${pkg.duration_days} Days</p>
             <p><strong>Price:</strong> ₹${pkg.price}</p>
-            <a href="package-details.html?id=${pkg.package_id}" style="color:#7c2638; font-weight:bold;">View Details & Book</a>
+            <a href="../package-details.html?id=${pkg.package_id}" style="color:#7c2638; font-weight:bold;">View Details & Book</a>
           </div>
         `).join('');
       } catch (err) {

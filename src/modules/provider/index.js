@@ -1,11 +1,5 @@
 'use strict';
 /* Provider module entry. Built-in Node `http` only (no Express, per the assignment).
- *   const { handleProviderRequest } = require('./src/modules/provider');
- *   ...inside the server's request handler, first line:
- *   if (await handleProviderRequest(req, res, { resolveUser: asyncFnReturningLoggedInUser })) return;
- *   (server.js does this with the real MySQL login; without resolveUser the insecure dev stub is used)
- * or, one line after the server is created and its request listener attached:
- *   require('./src/modules/provider').registerProviderRoutes(server);
  */
 const routes = require('./routes/provider.routes');
 const { requireProvider } = require('./middleware/auth');
@@ -43,8 +37,8 @@ async function handleProviderRequest(req, res, options = {}) {
       if (r.method !== req.method) continue;
       const user = await requireProvider(req, options.resolveUser);
       const params = Object.fromEntries(r.names.map((n, i) => [n, decodeURIComponent(m[i + 1])]));
-      const body = ['POST', 'PUT', 'PATCH'].includes(req.method) ? await readBody(req) : {};
-      const out = r.handler({ user, params, query: Object.fromEntries(url.searchParams), body });
+      const body = ['POST', 'PUT', 'PATCH'].includes(req.method) ? (req.body || await readBody(req)) : {};
+      const out = await r.handler({ user, params, query: Object.fromEntries(url.searchParams), body });
       send(res, out.status || 200, { ok: true, data: out.data });
       return true;
     }

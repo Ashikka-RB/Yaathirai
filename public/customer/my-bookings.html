@@ -8,8 +8,8 @@
   <style>
     .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
     .booking-card { border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: #fffdf7; }
-    .status-CONFIRMED { color: green; font-weight: bold; }
-    .status-CANCELLED { color: red; font-weight: bold; }
+    .status-CONFIRMED, .status-confirmed { color: green; font-weight: bold; }
+    .status-CANCELLED, .status-cancelled { color: red; font-weight: bold; }
     .btn-cancel { background: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
     .review-box { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc; }
     .review-box textarea { width: 100%; height: 60px; margin: 8px 0; padding: 8px; }
@@ -24,15 +24,16 @@
 
   <script>
     const user = JSON.parse(localStorage.getItem('user'));
+    const customerId = user ? (user.id || user.user_id) : null;
 
     async function fetchBookings() {
-      if (!user) {
+      if (!user || !customerId) {
         window.location.href = '../login.html';
         return;
       }
 
       try {
-        const res = await fetch(`/api/my-bookings?customerId=${user.id}`);
+        const res = await fetch(`/api/my-bookings?customerId=${customerId}`);
         const bookings = await res.json();
 
         if (!res.ok) throw new Error(bookings.error);
@@ -43,14 +44,17 @@
           return;
         }
 
-        list.innerHTML = bookings.map(b => `
+        list.innerHTML = bookings.map(b => {
+          const bStatus = String(b.booking_status || '').toUpperCase();
+          const travelDateStr = b.available_date ? new Date(b.available_date).toISOString().split('T')[0] : 'N/A';
+          return `
           <div class="booking-card">
             <h3>${b.package_title}</h3>
-            <p><strong>Travel Date:</strong> ${new Date(b.available_date).toISOString().split('T')[0]}</p>
+            <p><strong>Travel Date:</strong> ${travelDateStr}</p>
             <p><strong>Travelers:</strong> ${b.travelers} | <strong>Total Amount:</strong> ₹${b.total_amount}</p>
-            <p><strong>Status:</strong> <span class="status-${b.booking_status}">${b.booking_status}</span></p>
+            <p><strong>Status:</strong> <span class="status-${bStatus}">${bStatus}</span></p>
 
-            ${b.booking_status === 'CONFIRMED' ? `
+            ${bStatus === 'CONFIRMED' ? `
               <button class="btn-cancel" onclick="cancelBooking(${b.booking_id})">Cancel Booking</button>
 
               <div class="review-box">
@@ -68,7 +72,8 @@
               </div>
             ` : ''}
           </div>
-        `).join('');
+        `;
+        }).join('');
 
       } catch (err) {
         document.getElementById('bookingsList').innerHTML = `<p style="color:red;">${err.message}</p>`;
@@ -82,7 +87,7 @@
         const res = await fetch('/api/bookings/cancel', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ bookingId, customerId: user.id })
+          body: JSON.stringify({ bookingId, customerId })
         });
 
         const data = await res.json();
@@ -105,7 +110,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             bookingId,
-            customerId: user.id,
+            customerId,
             packageId,
             rating: parseInt(rating),
             comment

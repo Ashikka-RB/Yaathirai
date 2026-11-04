@@ -21,8 +21,9 @@
   <script>
     const bookingData = JSON.parse(sessionStorage.getItem('bookingData'));
     const user = JSON.parse(localStorage.getItem('user'));
+    const customerId = user ? (user.id || user.user_id) : null;
 
-    if (!bookingData || !user) {
+    if (!bookingData || !user || !customerId) {
       alert('Session expired or missing data.');
       window.location.href = '../packages.html';
     } else {
@@ -38,7 +39,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            customerId: user.id,
+            customerId: customerId,
             packageId: bookingData.packageId,
             availabilityId: bookingData.availabilityId,
             travelers: bookingData.travelers,

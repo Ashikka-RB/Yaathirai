@@ -45,12 +45,53 @@
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) window.location.href = '../login.html';
 
-    document.getElementById('name').value = user.name || '';
-    document.getElementById('email').value = user.email || '';
+    const userId = user.id || user.user_id;
 
-    document.getElementById('profileForm').addEventListener('submit', (e) => {
+    async function loadProfile() {
+      try {
+        const res = await fetch(`/api/customer/profile?id=${userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            document.getElementById('name').value = data.user.name || '';
+            document.getElementById('email').value = data.user.email || '';
+            document.getElementById('mobile').value = data.user.mobile || '';
+            document.getElementById('addressLine').value = data.user.address_line || '';
+            document.getElementById('city').value = data.user.city || '';
+            return;
+          }
+        }
+      } catch (err) {}
+      document.getElementById('name').value = user.name || '';
+      document.getElementById('email').value = user.email || '';
+    }
+
+    loadProfile();
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      alert('Profile details saved locally!');
+      const name = document.getElementById('name').value;
+      const mobile = document.getElementById('mobile').value;
+      const address_line = document.getElementById('addressLine').value;
+      const city = document.getElementById('city').value;
+
+      try {
+        const res = await fetch('/api/customer/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerId: userId, name, mobile, address_line, city })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          user.name = name;
+          localStorage.setItem('user', JSON.stringify(user));
+          alert('Profile updated successfully in MySQL database!');
+        } else {
+          alert('Update failed: ' + (data.error || 'Server error'));
+        }
+      } catch (err) {
+        alert('Network error updating profile.');
+      }
     });
   </script>
 </body>
