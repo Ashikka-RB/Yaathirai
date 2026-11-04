@@ -202,8 +202,18 @@
           </div>
           <div class="sa-field">
             <label class="sa-label" for="adminPassword" id="adminPasswordLabel">Password</label>
-            <input class="sa-input" type="password" id="adminPassword" maxlength="100" autocomplete="new-password" />
-            <span class="sa-hint" id="adminPasswordHint">At least 8 characters.</span>
+            <div style="position:relative; display:flex; align-items:center;">
+              <input class="sa-input" type="password" id="adminPassword" maxlength="100" autocomplete="new-password" style="padding-right:45px;" />
+              <button type="button" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; font-size:0.75rem; color:#7c2638;" onclick="toggleAdminPwd('adminPassword', this)">Show</button>
+            </div>
+            <span class="sa-hint" id="adminPasswordHint">At least 8 chars, uppercase, lowercase, number &amp; symbol.</span>
+          </div>
+          <div class="sa-field" id="adminConfirmPasswordSection">
+            <label class="sa-label" for="adminConfirmPassword" id="adminConfirmPasswordLabel">Confirm Password</label>
+            <div style="position:relative; display:flex; align-items:center;">
+              <input class="sa-input" type="password" id="adminConfirmPassword" maxlength="100" autocomplete="new-password" style="padding-right:45px;" />
+              <button type="button" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; font-size:0.75rem; color:#7c2638;" onclick="toggleAdminPwd('adminConfirmPassword', this)">Show</button>
+            </div>
           </div>
           <div class="sa-field sa-field-full" id="adminPermSection">
             <span class="sa-label">Permissions</span>
@@ -236,5 +246,17 @@
     </div>
   </div>
 
+  <script>
+    function toggleAdminPwd(id, btn) {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+  </script>
 </body>
 </html>

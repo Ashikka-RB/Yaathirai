@@ -21,29 +21,31 @@ function registerAuthRoutes(router) {
       }
 
       const user = users[0];
-      const inputHash = db.hashPassword(password);
+      const isValidPass = db.verifyPassword ? db.verifyPassword(password, user.password) : (user.password === db.hashPassword(password) || user.password === password);
 
-      if (user.password !== inputHash) {
+      if (!isValidPass) {
         return res.error(401, 'Invalid email or password.');
       }
 
-      if (user.status === 'blocked') {
+      const statusNorm = String(user.status || '').toLowerCase();
+      if (statusNorm === 'blocked') {
         return res.error(403, 'Your account has been blocked by an administrator.');
       }
 
-      if (user.status === 'pending') {
+      if (statusNorm === 'pending') {
         return res.error(403, 'Your account is pending administrator approval.');
       }
 
+      const normRole = String(user.role || '').toLowerCase();
       // Fetch user permissions if admin
       let permissions = [];
-      if (user.role === 'admin') {
+      if (normRole === 'admin') {
         const perms = await db.query(
           'SELECT permission_name FROM admin_permissions WHERE admin_id = ?',
           [user.user_id]
         );
         permissions = perms.map((p) => p.permission_name);
-      } else if (user.role === 'super_admin') {
+      } else if (normRole === 'super_admin' || normRole === 'superadmin') {
         // Super admin has all permissions
         permissions = [
           'manage_customers',
@@ -81,11 +83,13 @@ function registerAuthRoutes(router) {
         message: 'Login successful',
         token,
         user: {
+          id: user.user_id,
           user_id: user.user_id,
           name: user.name,
           email: user.email,
-          role: user.role,
-          status: user.status,
+          role: normRole,
+          status: statusNorm,
+          token,
           permissions
         }
       }));

@@ -6,11 +6,36 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-try {
-  require('dotenv').config();
-} catch (e) {
-  // dotenv is optional if not installed
+
+// Robust built-in environment loader (works whether dotenv package is installed or not)
+function loadEnv() {
+  const envCandidates = [
+    path.join(__dirname, '..', '.env'),
+    path.join(process.cwd(), '.env')
+  ];
+  for (const envPath of envCandidates) {
+    if (fs.existsSync(envPath)) {
+      try {
+        const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const idx = trimmed.indexOf('=');
+          if (idx !== -1) {
+            const key = trimmed.slice(0, idx).trim();
+            const val = trimmed.slice(idx + 1).trim().replace(/^['"]|['"]$/g, '');
+            if (process.env[key] === undefined) {
+              process.env[key] = val;
+            }
+          }
+        }
+      } catch (e) {
+        // ignore read error
+      }
+    }
+  }
 }
+loadEnv();
 
 let mysql;
 try {
@@ -20,8 +45,8 @@ try {
 }
 
 const DB_CONFIG = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '3306', 10),
+  host: process.env.DB_HOST || '127.0.0.1',
+  port: parseInt(process.env.DB_PORT || '3307', 10),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '',
   database: process.env.DB_NAME || 'tourism_db',
@@ -34,7 +59,56 @@ let pool = null;
 let isConnectedToMySQL = false;
 
 function hashPassword(plainText) {
-  return crypto.createHash('sha256').update(String(plainText || '')).digest('hex');
+  const str = String(plainText || '');
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(str, salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
+
+function verifyPassword(plainText, storedHash) {
+  if (!plainText || !storedHash) return false;
+  const inputStr = String(plainText);
+  const stored = String(storedHash);
+
+  // Scrypt format: salt:hash
+  if (stored.includes(':')) {
+    try {
+      const [salt, hash] = stored.split(':');
+      const verifyHash = crypto.scryptSync(inputStr, salt, 64).toString('hex');
+      return crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(verifyHash, 'hex'));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Legacy SHA-256 hash check
+  const sha = crypto.createHash('sha256').update(inputStr).digest('hex');
+  if (stored === sha) return true;
+
+  // Legacy plaintext fallback
+  return stored === inputStr;
+}
+
+function validatePasswordStrength(password) {
+  if (!password || typeof password !== 'string') {
+    return 'Password is required.';
+  }
+  if (password.length < 8) {
+    return 'Password must be at least 8 characters long.';
+  }
+  if (!/[A-Z]/.test(password)) {
+    return 'Password must contain at least one uppercase letter (A-Z).';
+  }
+  if (!/[a-z]/.test(password)) {
+    return 'Password must contain at least one lowercase letter (a-z).';
+  }
+  if (!/[0-9]/.test(password)) {
+    return 'Password must contain at least one number (0-9).';
+  }
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(password)) {
+    return 'Password must contain at least one special character.';
+  }
+  return null;
 }
 
 // In-Memory Seed Data (Mirrors schema.sql precisely)
@@ -674,6 +748,8 @@ module.exports = {
   query,
   execute: query,
   hashPassword,
+  verifyPassword,
+  validatePasswordStrength,
   logSystemActivity,
   isConnected: () => isConnectedToMySQL,
   memStore

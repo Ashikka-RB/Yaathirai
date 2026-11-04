@@ -64,7 +64,8 @@ function validateAdminInput(body, { requirePassword }) {
   if (!EMAIL_RE.test(email) || email.length > 150) errors.push('Enter a valid email address.');
   if (mobile && !/^[0-9+\-\s]{7,20}$/.test(mobile)) errors.push('Enter a valid mobile number.');
   if (requirePassword || password) {
-    if (password.length < 8) errors.push('Password must be at least 8 characters.');
+    const strengthErr = db.validatePasswordStrength ? db.validatePasswordStrength(password) : null;
+    if (strengthErr) errors.push(strengthErr);
     else if (password.length > 100) errors.push('Password is too long.');
   }
   return { errors, value: { name, email, mobile: mobile || null, password } };
@@ -510,6 +511,9 @@ function registerSuperAdminRoutes(router) {
     if (!user) return;
 
     const body = req.body || {};
+    if (body.confirmPassword !== undefined && body.password !== body.confirmPassword) {
+      return res.error(400, 'Password and Confirm Password do not match.');
+    }
     const { errors, value } = validateAdminInput(body, { requirePassword: true });
     const perms = validatePermissions(body.permissions);
     if (!perms.ok) errors.push(perms.error);
@@ -542,7 +546,11 @@ function registerSuperAdminRoutes(router) {
 
     const id = parseId(req.params.id);
     if (!id) return res.error(400, 'Invalid administrator id.');
-    const { errors, value } = validateAdminInput(req.body || {}, { requirePassword: false });
+    const body = req.body || {};
+    if (body.password && body.confirmPassword !== undefined && body.password !== body.confirmPassword) {
+      return res.error(400, 'Password and Confirm Password do not match.');
+    }
+    const { errors, value } = validateAdminInput(body, { requirePassword: false });
     if (errors.length) return res.error(400, errors.join(' '));
 
     try {

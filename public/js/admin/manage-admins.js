@@ -192,20 +192,30 @@
     const email = $('adminEmail').value.trim();
     const mobile = $('adminMobile').value.trim();
     const password = $('adminPassword').value;
+    const confirmPassword = $('adminConfirmPassword') ? $('adminConfirmPassword').value : '';
     const errors = [];
     const bad = [];
 
     if (name.length < 2 || name.length > 100) { errors.push('Name must be between 2 and 100 characters.'); bad.push('adminName'); }
     if (!EMAIL_RE.test(email)) { errors.push('Enter a valid email address.'); bad.push('adminEmail'); }
     if (mobile && !/^[0-9+\-\s]{7,20}$/.test(mobile)) { errors.push('Enter a valid mobile number.'); bad.push('adminMobile'); }
-    if ((editingId === null || password) && password.length < 8) {
-      errors.push('Password must be at least 8 characters.'); bad.push('adminPassword');
+    if (editingId === null || password) {
+      if (password.length < 8) {
+        errors.push('Password must be at least 8 characters.'); bad.push('adminPassword');
+      } else if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(password)) {
+        errors.push('Password must contain uppercase, lowercase, number and special character.'); bad.push('adminPassword');
+      }
+      if (password !== confirmPassword) {
+        errors.push('Password and Confirm Password do not match.'); bad.push('adminConfirmPassword');
+      }
     }
 
-    ['adminName', 'adminEmail', 'adminMobile', 'adminPassword'].forEach((id) =>
-      $(id).classList.toggle('is-invalid', bad.includes(id)));
+    ['adminName', 'adminEmail', 'adminMobile', 'adminPassword', 'adminConfirmPassword'].forEach((id) => {
+      const el = $(id);
+      if (el) el.classList.toggle('is-invalid', bad.includes(id));
+    });
 
-    return { errors, value: { name, email, mobile, password } };
+    return { errors, value: { name, email, mobile, password, confirmPassword } };
   }
 
   async function submitForm(e) {
@@ -217,7 +227,10 @@
     setFormError('');
 
     const payload = { name: value.name, email: value.email, mobile: value.mobile };
-    if (value.password) payload.password = value.password;
+    if (value.password) {
+      payload.password = value.password;
+      payload.confirmPassword = value.confirmPassword;
+    }
 
     const creating = editingId === null;
     if (creating) {

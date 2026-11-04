@@ -8,14 +8,29 @@ const db = require('./db');
 
 const SECRET_KEY = process.env.SESSION_SECRET || 'yaathirai_secret_jwt_key_2026_local_tourism';
 
+function normalizeRole(role) {
+  if (!role) return '';
+  const r = String(role).trim().toLowerCase();
+  if (r === 'super_admin' || r === 'superadmin') return 'super_admin';
+  return r;
+}
+
+function normalizeStatus(status) {
+  if (!status) return 'active';
+  const s = String(status).trim().toLowerCase();
+  return s;
+}
+
 function generateToken(user) {
+  const normRole = normalizeRole(user.role);
+  const normStatus = normalizeStatus(user.status);
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
   const payload = Buffer.from(JSON.stringify({
     user_id: user.user_id,
     name: user.name,
     email: user.email,
-    role: user.role,
-    status: user.status,
+    role: normRole,
+    status: normStatus,
     exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
   })).toString('base64url');
 
@@ -77,11 +92,15 @@ async function authenticateRequest(req) {
   // Re-check the account so deactivated or deleted users lose access immediately
   try {
     const found = await db.query('SELECT user_id, role, status FROM users WHERE user_id = ?', [decoded.user_id]);
-    if (!found.length || found[0].status === 'blocked') return null;
-    decoded.role = found[0].role;
-    decoded.status = found[0].status;
+    if (!found.length) return null;
+    const currentStatus = normalizeStatus(found[0].status);
+    if (currentStatus === 'blocked' || currentStatus === 'inactive') return null;
+    decoded.role = normalizeRole(found[0].role);
+    decoded.status = currentStatus;
   } catch (err) {
     // If the lookup itself fails, fall back to the data inside the token
+    decoded.role = normalizeRole(decoded.role);
+    decoded.status = normalizeStatus(decoded.status);
   }
 
   // Retrieve user fresh permissions
@@ -104,23 +123,26 @@ async function authenticateRequest(req) {
 
 // Role guard helper
 function requireRole(allowedRoles) {
+  const normAllowed = allowedRoles.map(normalizeRole);
   return (req, res, user) => {
     if (!user) {
       res.error(401, 'Authentication required. Please log in.');
       return false;
     }
 
-    if (user.status !== 'active') {
+    const userStatus = normalizeStatus(user.status);
+    if (userStatus !== 'active' && userStatus !== 'approved') {
       res.error(403, 'Your account is suspended or pending approval.');
       return false;
     }
 
+    const userRole = normalizeRole(user.role);
     // Super Admin has access to all admin functions
-    if (user.role === 'super_admin') {
+    if (userRole === 'super_admin') {
       return true;
     }
 
-    if (!allowedRoles.includes(user.role)) {
+    if (!normAllowed.includes(userRole)) {
       res.error(403, `Access denied. Requires one of roles: ${allowedRoles.join(', ')}`);
       return false;
     }

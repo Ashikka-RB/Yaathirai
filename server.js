@@ -71,9 +71,18 @@ async function authenticateProvider(req) {
 // 1. POST /api/register
 router.post('/api/register', async (req, res) => {
   try {
-    const { name, email, password, mobile, role } = req.body;
+    const { name, email, password, confirmPassword, mobile, role } = req.body;
     if (!name || !email || !password || !role) {
       return res.error(400, 'Missing required fields: name, email, password, role');
+    }
+
+    if (confirmPassword !== undefined && password !== confirmPassword) {
+      return res.error(400, 'Password and Confirm Password do not match.');
+    }
+
+    const passError = db.validatePasswordStrength ? db.validatePasswordStrength(password) : null;
+    if (passError) {
+      return res.error(400, passError);
     }
 
     const roleNormalized = String(role).toUpperCase();
@@ -118,9 +127,9 @@ router.post('/api/login', async (req, res) => {
     }
 
     const user = rows[0];
-    const inputHash = db.hashPassword(password);
+    const isValidPass = db.verifyPassword ? db.verifyPassword(password, user.password) : (user.password === db.hashPassword(password) || user.password === password);
 
-    if (user.password !== inputHash && user.password !== password) {
+    if (!isValidPass) {
       return res.error(401, 'Invalid email or password');
     }
 
@@ -132,8 +141,40 @@ router.post('/api/login', async (req, res) => {
       return res.error(403, 'Your provider account is currently pending administrator review.');
     }
 
+    const normRole = String(user.role || '').toLowerCase();
     const token = generateToken(user);
-    const legacyToken = signToken({ id: user.user_id, role: String(user.role).toUpperCase() });
+    const legacyToken = signToken({ id: user.user_id, role: normRole.toUpperCase() });
+
+    // Fetch user permissions if admin
+    let permissions = [];
+    if (normRole === 'admin') {
+      const perms = await db.query(
+        'SELECT permission_name FROM admin_permissions WHERE admin_id = ?',
+        [user.user_id]
+      );
+      permissions = perms.map((p) => p.permission_name);
+    } else if (normRole === 'super_admin' || normRole === 'superadmin') {
+      permissions = [
+        'manage_customers',
+        'manage_providers',
+        'manage_destinations',
+        'manage_categories',
+        'manage_packages',
+        'manage_bookings',
+        'view_reports',
+        'manage_admins',
+        'manage_permissions',
+        'system_logs',
+        'system_settings'
+      ];
+    }
+
+    await db.logSystemActivity(
+      user.user_id,
+      'USER_LOGIN',
+      `${normRole.toUpperCase()} '${user.name}' logged in successfully.`,
+      req.socket.remoteAddress || '127.0.0.1'
+    );
 
     res.writeHead(200, {
       'Content-Type': 'application/json; charset=utf-8',
@@ -149,7 +190,9 @@ router.post('/api/login', async (req, res) => {
         user_id: user.user_id,
         name: user.name,
         email: user.email,
-        role: String(user.role).toUpperCase(),
+        role: normRole,
+        status: statusNorm.toLowerCase(),
+        permissions,
         token
       }
     }));

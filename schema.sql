@@ -149,7 +149,10 @@ INSERT IGNORE INTO package_availability (availability_id, package_id, available_
   (4, 3, '2026-11-20', 12, 'AVAILABLE'),
   (5, 4, '2026-11-24', 15, 'AVAILABLE'),
   (6, 5, '2026-11-28', 10, 'AVAILABLE'),
-  (7, 6, '2026-11-25', 18, 'AVAILABLE');
+  (7, 6, '2026-11-25', 18, 'AVAILABLE'),
+  (8, 8, '2026-11-26', 15, 'AVAILABLE'),
+  (9, 8, '2026-12-05', 20, 'AVAILABLE'),
+  (10, 7, '2026-11-28', 12, 'AVAILABLE');
 
 -- 8. BOOKINGS TABLE
 CREATE TABLE IF NOT EXISTS bookings (
