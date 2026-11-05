@@ -1,0 +1,19 @@
+{
+  "name": "yaathirai",
+  "version": "1.0.0",
+  "description": "Yaathirai - Local Tourism Package Booking System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "tourism",
+    "booking",
+    "yaathirai"
+  ],
+  "author": "Yaathirai Team",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^3.11.3"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "yaathirai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashikka-RB/Yaathirai.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ashikka-RB/Yaathirai/issues"
+  },
+  "homepage": "https://github.com/Ashikka-RB/Yaathirai#readme",
+  "dependencies": {
+    "mysql2": "^3.24.6"
+  }
+}

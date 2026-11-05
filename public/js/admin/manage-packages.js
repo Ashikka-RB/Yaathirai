@@ -124,7 +124,7 @@ async function loadPackages() {
 
         // Update pending moderation badge
         const pendingCount = packages.filter(
-            (p) => p.status === 'pending'
+            (p) => String(p.status || '').toLowerCase() === 'pending'
         ).length;
 
         const badgePkg = document.getElementById('pendingPackagesBadge');
@@ -150,8 +150,9 @@ async function loadPackages() {
         tbody.innerHTML = packages.map((pkg) => {
 
             let actionButtons = '';
+            const pkgStatusLower = String(pkg.status || '').toLowerCase();
 
-            if (pkg.status === 'pending') {
+            if (pkgStatusLower === 'pending') {
 
                 actionButtons = `
                     <button class="action-btn btn-outline-success"
@@ -165,7 +166,7 @@ async function loadPackages() {
                     </button>
                 `;
 
-            } else if (pkg.status === 'approved') {
+            } else if (pkgStatusLower === 'approved') {
 
                 actionButtons = `
                     <button class="action-btn btn-outline-danger"
@@ -174,7 +175,7 @@ async function loadPackages() {
                     </button>
                 `;
 
-            } else if (pkg.status === 'disabled') {
+            } else if (pkgStatusLower === 'disabled') {
 
                 actionButtons = `
                     <button class="action-btn btn-outline-success"
@@ -183,7 +184,7 @@ async function loadPackages() {
                     </button>
                 `;
 
-            } else if (pkg.status === 'rejected') {
+            } else if (pkgStatusLower === 'rejected') {
 
                 actionButtons = `
                     <button class="action-btn btn-outline-success"
@@ -258,9 +259,9 @@ async function loadPackages() {
                     </td>
 
                     <td>
-                        <span class="badge badge-${pkg.status}">
+                        <span class="badge badge-${String(pkg.status||'').toLowerCase()}">
                             <span class="badge-dot"></span>
-                            ${pkg.status}
+                            ${String(pkg.status||'').toLowerCase()}
                         </span>
                     </td>
 
@@ -442,9 +443,9 @@ async function viewPackageDetails(pkgId) {
             `${pkg.capacity} Travelers`;
 
         document.getElementById('modalPkgStatusBadge').innerHTML = `
-            <span class="badge badge-${pkg.status}">
+            <span class="badge badge-${String(pkg.status||'').toLowerCase()}">
                 <span class="badge-dot"></span>
-                ${pkg.status}
+                ${String(pkg.status||'').toLowerCase()}
             </span>
         `;
 
@@ -510,7 +511,8 @@ async function viewPackageDetails(pkgId) {
 
         let modHtml = '';
 
-        if (pkg.status === 'pending') {
+        const modalPkgStatusLower = String(pkg.status || '').toLowerCase();
+        if (modalPkgStatusLower === 'pending') {
 
             modHtml = `
                 <button class="btn-primary btn-sm"
@@ -524,7 +526,7 @@ async function viewPackageDetails(pkgId) {
                 </button>
             `;
 
-        } else if (pkg.status === 'approved') {
+        } else if (modalPkgStatusLower === 'approved') {
 
             modHtml = `
                 <button class="btn-secondary btn-sm"

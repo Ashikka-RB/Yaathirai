@@ -618,7 +618,8 @@ function handleMemQuery(sql, params) {
       ...p,
       destination_name: dest.name || 'Tamil Nadu',
       category_name: cat.category_name || 'General',
-      provider_name: prov.name || 'Local Guide'
+      provider_name: prov.name || 'Local Guide',
+      provider_email: prov.email || ''
     }];
   }
 
@@ -752,5 +753,6 @@ module.exports = {
   validatePasswordStrength,
   logSystemActivity,
   isConnected: () => isConnectedToMySQL,
+  getIsConnected: () => isConnectedToMySQL,
   memStore
 };

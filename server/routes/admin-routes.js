@@ -903,7 +903,19 @@ function registerAdminRoutes(router) {
 
     try {
       const pkgId = parseInt(req.params.id, 10);
-      const rows = await db.query('SELECT * FROM tour_packages WHERE package_id = ?', [pkgId]);
+      const rows = await db.query(
+        `SELECT p.*,
+                d.name AS destination_name,
+                c.category_name,
+                u.name AS provider_name,
+                u.email AS provider_email
+         FROM tour_packages p
+         LEFT JOIN destinations d ON p.destination_id = d.destination_id
+         LEFT JOIN categories c ON p.category_id = c.category_id
+         LEFT JOIN users u ON p.provider_id = u.user_id
+         WHERE p.package_id = ?`,
+        [pkgId]
+      );
       if (rows.length === 0) {
         return res.error(404, 'Tour package not found.');
       }
